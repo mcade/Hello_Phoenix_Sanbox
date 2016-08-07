@@ -1,27 +1,24 @@
-// Brunch automatically concatenates all files in your
-// watched paths. Those paths can be configured at
-// config.paths.watched in "brunch-config.js".
-//
-// However, those files will only be executed if
-// explicitly imported. The only exception are files
-// in vendor, which are never wrapped in imports and
-// therefore are always executed.
-
-// Import dependencies
-//
-// If you no longer want to use a dependency, remember
-// to also remove its path from "config.paths.watched".
 import "phoenix_html"
 
-// Import local files
-//
-// Local files can be imported directly using relative
-// paths "./socket" or full ones "web/static/js/socket".
+import socket from "./socket"
+import Elm from './main'
+import setup_phoenix_socket_ports from './setup_phoenix_socket_ports'
 
-// import socket from "./socket"
+let socket_setup_once = false
+socket.onOpen(() => {
+  $(document).ready(function(){
+    if(socket_setup_once) return
+    socket_setup_once = true
 
-import Elm from './main';
-const elmDiv = document.querySelector('#elm-target');
-if (elmDiv) {
-  Elm.Main.embed(elmDiv);
-}
+    // Here setup all your usual javascript that also needs to use the websocket
+
+    let app = Elm.Main.embed(document.querySelector('#elm-target'))
+    setup_phoenix_socket_ports(app, socket)
+  });
+});
+
+
+// const elmDiv = document.querySelector('#elm-target');
+// if (elmDiv) {
+//   Elm.Main.embed(elmDiv);
+// }

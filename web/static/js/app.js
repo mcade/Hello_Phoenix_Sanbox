@@ -15,8 +15,9 @@ socket.onOpen(() => {
     let app = Elm.Main.embed(document.querySelector('#elm-target'))
     setup_phoenix_socket_ports(app, socket)
     
-    app.ports.portReflection.send(true);
+    
     app.ports.portSubmit.subscribe(function (val) {
+        app.ports.portReflection.send(val);
         console.log(val);
     });
   });

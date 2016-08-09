@@ -17,6 +17,7 @@ defmodule HelloPhoenix.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
+    resources "/reflections", ReflectionController
   end
 
   # Other scopes may use custom stacks.

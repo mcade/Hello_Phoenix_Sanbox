@@ -1,0 +1,33 @@
+<h2>Show reflection</h2>
+
+<ul>
+
+  <li>
+    <strong>Date:</strong>
+    <%= @reflection.date %>
+  </li>
+
+  <li>
+    <strong>Markdown:</strong>
+    <%= @reflection.markdown %>
+  </li>
+
+  <li>
+    <strong>Author:</strong>
+    <%= @reflection.author %>
+  </li>
+
+  <li>
+    <strong>Read cnt:</strong>
+    <%= @reflection.read_cnt %>
+  </li>
+
+  <li>
+    <strong>Published:</strong>
+    <%= @reflection.published %>
+  </li>
+
+</ul>
+
+<%= link "Edit", to: reflection_path(@conn, :edit, @reflection) %>
+<%= link "Back", to: reflection_path(@conn, :index) %>

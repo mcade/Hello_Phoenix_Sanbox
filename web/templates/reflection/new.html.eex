@@ -1,0 +1,6 @@
+<h2>New reflection</h2>
+
+<%= render "form.html", changeset: @changeset,
+                        action: reflection_path(@conn, :create) %>
+
+<%= link "Back", to: reflection_path(@conn, :index) %>

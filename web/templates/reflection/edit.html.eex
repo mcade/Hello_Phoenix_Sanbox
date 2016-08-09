@@ -1,0 +1,6 @@
+<h2>Edit reflection</h2>
+
+<%= render "form.html", changeset: @changeset,
+                        action: reflection_path(@conn, :update, @reflection) %>
+
+<%= link "Back", to: reflection_path(@conn, :index) %>

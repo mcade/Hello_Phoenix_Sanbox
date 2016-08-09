@@ -3,6 +3,7 @@ defmodule HelloPhoenix.UserSocket do
 
   ## Channels
   # channel "room:*", HelloPhoenix.RoomChannel
+  channel "reflection", Iphod.ReflectionChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket

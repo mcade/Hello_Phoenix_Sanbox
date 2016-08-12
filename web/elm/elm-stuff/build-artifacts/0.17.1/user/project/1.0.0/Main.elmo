@@ -1,1723 +1,72 @@
-var _user$project$Main$connect_room = function (rid) {
-	return _user$project$JSPhoenix$connect(
-		{
-			topic: 'reflection',
-			timeout_ms: _elm_lang$core$Maybe$Nothing,
-			chanCloseCB: _elm_lang$core$Maybe$Nothing,
-			chanErrorCB: _elm_lang$core$Maybe$Nothing,
-			syncState: _elm_lang$core$Maybe$Just(
-				{
-					portName: 'onRoomSyncState',
-					cb_data: _elm_lang$core$Json_Encode$int(rid)
-				}),
-			syncJoin: _elm_lang$core$Maybe$Just(
-				{
-					portName: 'onRoomSyncJoin',
-					cb_data: _elm_lang$core$Json_Encode$int(rid)
-				}),
-			syncLeave: _elm_lang$core$Maybe$Just(
-				{
-					portName: 'onRoomSyncLeave',
-					cb_data: _elm_lang$core$Json_Encode$int(rid)
-				}),
-			joinData: _elm_lang$core$Json_Encode$null,
-			joinEvents: _elm_lang$core$Native_List.fromArray(
+var _user$project$Main$pushRoomMsg = function (model) {
+	var msg_send_push = {
+		topic: 'reflection',
+		mid: 'submit',
+		msg: _elm_lang$core$Json_Encode$object(
+			_elm_lang$core$Native_List.fromArray(
 				[
 					{
-					portName: 'onRoomConnect',
-					msgID: 'ok',
-					cb_data: _elm_lang$core$Json_Encode$int(rid)
-				}
-				]),
-			onPorts: _elm_lang$core$Native_List.fromArray(
-				[
-					{
-					portName: 'onRoomInfo',
-					msgID: 'room:info',
-					cb_data: _elm_lang$core$Json_Encode$int(rid)
+					ctor: '_Tuple2',
+					_0: 'date',
+					_1: _elm_lang$core$Json_Encode$string(model.date)
 				},
 					{
-					portName: 'onRoomMsgsInit',
-					msgID: 'msgs:init',
-					cb_data: _elm_lang$core$Json_Encode$int(rid)
+					ctor: '_Tuple2',
+					_0: 'markdown',
+					_1: _elm_lang$core$Json_Encode$string(model.markdown)
 				},
 					{
-					portName: 'onRoomMsgsAdd',
-					msgID: 'msgs:add',
-					cb_data: _elm_lang$core$Json_Encode$int(rid)
+					ctor: '_Tuple2',
+					_0: 'author',
+					_1: _elm_lang$core$Json_Encode$string(model.author)
+				},
+					{
+					ctor: '_Tuple2',
+					_0: 'published',
+					_1: _elm_lang$core$Json_Encode$bool(model.published)
 				}
-				])
-		});
+				])),
+		pushEvents: _elm_lang$core$Native_List.fromArray(
+			[
+				{
+				portName: 'onMsgSent',
+				msgID: 'ok',
+				cb_data: _elm_lang$core$Json_Encode$string('ok')
+			},
+				{
+				portName: 'onMsgError',
+				msgID: 'error',
+				cb_data: _elm_lang$core$Json_Encode$string('error')
+			},
+				{
+				portName: 'onMsgTimeout',
+				msgID: 'timeout',
+				cb_data: _elm_lang$core$Json_Encode$string('timeout')
+			}
+			])
+	};
+	return _user$project$JSPhoenix$push(msg_send_push);
 };
-var _user$project$Main$initModel = {id: 0, date: '', author: '', text: '', published: false};
-var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$initModel, _1: _elm_lang$core$Platform_Cmd$none};
-var _user$project$Main$onRoomConnect = _elm_lang$core$Native_Platform.incomingPort(
-	'onRoomConnect',
-	A2(
-		_elm_lang$core$Json_Decode$andThen,
-		A2(_elm_lang$core$Json_Decode_ops[':='], 'topic', _elm_lang$core$Json_Decode$string),
-		function (topic) {
-			return A2(
-				_elm_lang$core$Json_Decode$andThen,
-				A2(_elm_lang$core$Json_Decode_ops[':='], 'msgID', _elm_lang$core$Json_Decode$string),
-				function (msgID) {
-					return A2(
-						_elm_lang$core$Json_Decode$andThen,
-						A2(
-							_elm_lang$core$Json_Decode_ops[':='],
-							'msg',
-							A2(
-								_elm_lang$core$Json_Decode$andThen,
-								A2(
-									_elm_lang$core$Json_Decode_ops[':='],
-									'msgs',
-									_elm_lang$core$Json_Decode$list(
-										A2(
-											_elm_lang$core$Json_Decode$andThen,
-											A2(_elm_lang$core$Json_Decode_ops[':='], 'date', _elm_lang$core$Json_Decode$string),
-											function (date) {
-												return A2(
-													_elm_lang$core$Json_Decode$andThen,
-													A2(_elm_lang$core$Json_Decode_ops[':='], 'markdown', _elm_lang$core$Json_Decode$string),
-													function (markdown) {
-														return A2(
-															_elm_lang$core$Json_Decode$andThen,
-															A2(_elm_lang$core$Json_Decode_ops[':='], 'author', _elm_lang$core$Json_Decode$string),
-															function (author) {
-																return A2(
-																	_elm_lang$core$Json_Decode$andThen,
-																	A2(_elm_lang$core$Json_Decode_ops[':='], 'read_cnt', _elm_lang$core$Json_Decode$int),
-																	function (read_cnt) {
-																		return A2(
-																			_elm_lang$core$Json_Decode$andThen,
-																			A2(_elm_lang$core$Json_Decode_ops[':='], 'published', _elm_lang$core$Json_Decode$bool),
-																			function (published) {
-																				return A2(
-																					_elm_lang$core$Json_Decode$andThen,
-																					A2(
-																						_elm_lang$core$Json_Decode_ops[':='],
-																						'inserted_at',
-																						A2(
-																							_elm_lang$core$Json_Decode$andThen,
-																							A2(_elm_lang$core$Json_Decode_ops[':='], 'year', _elm_lang$core$Json_Decode$int),
-																							function (year) {
-																								return A2(
-																									_elm_lang$core$Json_Decode$andThen,
-																									A2(
-																										_elm_lang$core$Json_Decode_ops[':='],
-																										'timezone',
-																										A2(
-																											_elm_lang$core$Json_Decode$andThen,
-																											A2(_elm_lang$core$Json_Decode_ops[':='], 'until', _elm_lang$core$Json_Decode$string),
-																											function (until) {
-																												return A2(
-																													_elm_lang$core$Json_Decode$andThen,
-																													A2(_elm_lang$core$Json_Decode_ops[':='], 'offset_utc', _elm_lang$core$Json_Decode$int),
-																													function (offset_utc) {
-																														return A2(
-																															_elm_lang$core$Json_Decode$andThen,
-																															A2(_elm_lang$core$Json_Decode_ops[':='], 'offset_std', _elm_lang$core$Json_Decode$int),
-																															function (offset_std) {
-																																return A2(
-																																	_elm_lang$core$Json_Decode$andThen,
-																																	A2(_elm_lang$core$Json_Decode_ops[':='], 'full_name', _elm_lang$core$Json_Decode$string),
-																																	function (full_name) {
-																																		return A2(
-																																			_elm_lang$core$Json_Decode$andThen,
-																																			A2(_elm_lang$core$Json_Decode_ops[':='], 'from', _elm_lang$core$Json_Decode$string),
-																																			function (from) {
-																																				return A2(
-																																					_elm_lang$core$Json_Decode$andThen,
-																																					A2(_elm_lang$core$Json_Decode_ops[':='], 'abbreviation', _elm_lang$core$Json_Decode$string),
-																																					function (abbreviation) {
-																																						return _elm_lang$core$Json_Decode$succeed(
-																																							{until: until, offset_utc: offset_utc, offset_std: offset_std, full_name: full_name, from: from, abbreviation: abbreviation});
-																																					});
-																																			});
-																																	});
-																															});
-																													});
-																											})),
-																									function (timezone) {
-																										return A2(
-																											_elm_lang$core$Json_Decode$andThen,
-																											A2(_elm_lang$core$Json_Decode_ops[':='], 'second', _elm_lang$core$Json_Decode$int),
-																											function (second) {
-																												return A2(
-																													_elm_lang$core$Json_Decode$andThen,
-																													A2(_elm_lang$core$Json_Decode_ops[':='], 'month', _elm_lang$core$Json_Decode$int),
-																													function (month) {
-																														return A2(
-																															_elm_lang$core$Json_Decode$andThen,
-																															A2(_elm_lang$core$Json_Decode_ops[':='], 'minute', _elm_lang$core$Json_Decode$int),
-																															function (minute) {
-																																return A2(
-																																	_elm_lang$core$Json_Decode$andThen,
-																																	A2(_elm_lang$core$Json_Decode_ops[':='], 'millisecond', _elm_lang$core$Json_Decode$int),
-																																	function (millisecond) {
-																																		return A2(
-																																			_elm_lang$core$Json_Decode$andThen,
-																																			A2(_elm_lang$core$Json_Decode_ops[':='], 'hour', _elm_lang$core$Json_Decode$int),
-																																			function (hour) {
-																																				return A2(
-																																					_elm_lang$core$Json_Decode$andThen,
-																																					A2(_elm_lang$core$Json_Decode_ops[':='], 'day', _elm_lang$core$Json_Decode$int),
-																																					function (day) {
-																																						return A2(
-																																							_elm_lang$core$Json_Decode$andThen,
-																																							A2(_elm_lang$core$Json_Decode_ops[':='], 'calendar', _elm_lang$core$Json_Decode$string),
-																																							function (calendar) {
-																																								return _elm_lang$core$Json_Decode$succeed(
-																																									{year: year, timezone: timezone, second: second, month: month, minute: minute, millisecond: millisecond, hour: hour, day: day, calendar: calendar});
-																																							});
-																																					});
-																																			});
-																																	});
-																															});
-																													});
-																											});
-																									});
-																							})),
-																					function (inserted_at) {
-																						return A2(
-																							_elm_lang$core$Json_Decode$andThen,
-																							A2(
-																								_elm_lang$core$Json_Decode_ops[':='],
-																								'updated_at',
-																								A2(
-																									_elm_lang$core$Json_Decode$andThen,
-																									A2(_elm_lang$core$Json_Decode_ops[':='], 'year', _elm_lang$core$Json_Decode$int),
-																									function (year) {
-																										return A2(
-																											_elm_lang$core$Json_Decode$andThen,
-																											A2(
-																												_elm_lang$core$Json_Decode_ops[':='],
-																												'timezone',
-																												A2(
-																													_elm_lang$core$Json_Decode$andThen,
-																													A2(_elm_lang$core$Json_Decode_ops[':='], 'until', _elm_lang$core$Json_Decode$string),
-																													function (until) {
-																														return A2(
-																															_elm_lang$core$Json_Decode$andThen,
-																															A2(_elm_lang$core$Json_Decode_ops[':='], 'offset_utc', _elm_lang$core$Json_Decode$int),
-																															function (offset_utc) {
-																																return A2(
-																																	_elm_lang$core$Json_Decode$andThen,
-																																	A2(_elm_lang$core$Json_Decode_ops[':='], 'offset_std', _elm_lang$core$Json_Decode$int),
-																																	function (offset_std) {
-																																		return A2(
-																																			_elm_lang$core$Json_Decode$andThen,
-																																			A2(_elm_lang$core$Json_Decode_ops[':='], 'full_name', _elm_lang$core$Json_Decode$string),
-																																			function (full_name) {
-																																				return A2(
-																																					_elm_lang$core$Json_Decode$andThen,
-																																					A2(_elm_lang$core$Json_Decode_ops[':='], 'from', _elm_lang$core$Json_Decode$string),
-																																					function (from) {
-																																						return A2(
-																																							_elm_lang$core$Json_Decode$andThen,
-																																							A2(_elm_lang$core$Json_Decode_ops[':='], 'abbreviation', _elm_lang$core$Json_Decode$string),
-																																							function (abbreviation) {
-																																								return _elm_lang$core$Json_Decode$succeed(
-																																									{until: until, offset_utc: offset_utc, offset_std: offset_std, full_name: full_name, from: from, abbreviation: abbreviation});
-																																							});
-																																					});
-																																			});
-																																	});
-																															});
-																													})),
-																											function (timezone) {
-																												return A2(
-																													_elm_lang$core$Json_Decode$andThen,
-																													A2(_elm_lang$core$Json_Decode_ops[':='], 'second', _elm_lang$core$Json_Decode$int),
-																													function (second) {
-																														return A2(
-																															_elm_lang$core$Json_Decode$andThen,
-																															A2(_elm_lang$core$Json_Decode_ops[':='], 'month', _elm_lang$core$Json_Decode$int),
-																															function (month) {
-																																return A2(
-																																	_elm_lang$core$Json_Decode$andThen,
-																																	A2(_elm_lang$core$Json_Decode_ops[':='], 'minute', _elm_lang$core$Json_Decode$int),
-																																	function (minute) {
-																																		return A2(
-																																			_elm_lang$core$Json_Decode$andThen,
-																																			A2(_elm_lang$core$Json_Decode_ops[':='], 'millisecond', _elm_lang$core$Json_Decode$int),
-																																			function (millisecond) {
-																																				return A2(
-																																					_elm_lang$core$Json_Decode$andThen,
-																																					A2(_elm_lang$core$Json_Decode_ops[':='], 'hour', _elm_lang$core$Json_Decode$int),
-																																					function (hour) {
-																																						return A2(
-																																							_elm_lang$core$Json_Decode$andThen,
-																																							A2(_elm_lang$core$Json_Decode_ops[':='], 'day', _elm_lang$core$Json_Decode$int),
-																																							function (day) {
-																																								return A2(
-																																									_elm_lang$core$Json_Decode$andThen,
-																																									A2(_elm_lang$core$Json_Decode_ops[':='], 'calendar', _elm_lang$core$Json_Decode$string),
-																																									function (calendar) {
-																																										return _elm_lang$core$Json_Decode$succeed(
-																																											{year: year, timezone: timezone, second: second, month: month, minute: minute, millisecond: millisecond, hour: hour, day: day, calendar: calendar});
-																																									});
-																																							});
-																																					});
-																																			});
-																																	});
-																															});
-																													});
-																											});
-																									})),
-																							function (updated_at) {
-																								return _elm_lang$core$Json_Decode$succeed(
-																									{date: date, markdown: markdown, author: author, read_cnt: read_cnt, published: published, inserted_at: inserted_at, updated_at: updated_at});
-																							});
-																					});
-																			});
-																	});
-															});
-													});
-											}))),
-								function (msgs) {
-									return _elm_lang$core$Json_Decode$succeed(
-										{msgs: msgs});
-								})),
-						function (msg) {
-							return A2(
-								_elm_lang$core$Json_Decode$andThen,
-								A2(
-									_elm_lang$core$Json_Decode_ops[':='],
-									'cb_data',
-									A2(
-										_elm_lang$core$Json_Decode$andThen,
-										A2(_elm_lang$core$Json_Decode_ops[':='], 'date', _elm_lang$core$Json_Decode$string),
-										function (date) {
-											return A2(
-												_elm_lang$core$Json_Decode$andThen,
-												A2(_elm_lang$core$Json_Decode_ops[':='], 'markdown', _elm_lang$core$Json_Decode$string),
-												function (markdown) {
-													return A2(
-														_elm_lang$core$Json_Decode$andThen,
-														A2(_elm_lang$core$Json_Decode_ops[':='], 'author', _elm_lang$core$Json_Decode$string),
-														function (author) {
-															return A2(
-																_elm_lang$core$Json_Decode$andThen,
-																A2(_elm_lang$core$Json_Decode_ops[':='], 'read_cnt', _elm_lang$core$Json_Decode$int),
-																function (read_cnt) {
-																	return A2(
-																		_elm_lang$core$Json_Decode$andThen,
-																		A2(_elm_lang$core$Json_Decode_ops[':='], 'published', _elm_lang$core$Json_Decode$bool),
-																		function (published) {
-																			return A2(
-																				_elm_lang$core$Json_Decode$andThen,
-																				A2(
-																					_elm_lang$core$Json_Decode_ops[':='],
-																					'inserted_at',
-																					A2(
-																						_elm_lang$core$Json_Decode$andThen,
-																						A2(_elm_lang$core$Json_Decode_ops[':='], 'year', _elm_lang$core$Json_Decode$int),
-																						function (year) {
-																							return A2(
-																								_elm_lang$core$Json_Decode$andThen,
-																								A2(
-																									_elm_lang$core$Json_Decode_ops[':='],
-																									'timezone',
-																									A2(
-																										_elm_lang$core$Json_Decode$andThen,
-																										A2(_elm_lang$core$Json_Decode_ops[':='], 'until', _elm_lang$core$Json_Decode$string),
-																										function (until) {
-																											return A2(
-																												_elm_lang$core$Json_Decode$andThen,
-																												A2(_elm_lang$core$Json_Decode_ops[':='], 'offset_utc', _elm_lang$core$Json_Decode$int),
-																												function (offset_utc) {
-																													return A2(
-																														_elm_lang$core$Json_Decode$andThen,
-																														A2(_elm_lang$core$Json_Decode_ops[':='], 'offset_std', _elm_lang$core$Json_Decode$int),
-																														function (offset_std) {
-																															return A2(
-																																_elm_lang$core$Json_Decode$andThen,
-																																A2(_elm_lang$core$Json_Decode_ops[':='], 'full_name', _elm_lang$core$Json_Decode$string),
-																																function (full_name) {
-																																	return A2(
-																																		_elm_lang$core$Json_Decode$andThen,
-																																		A2(_elm_lang$core$Json_Decode_ops[':='], 'from', _elm_lang$core$Json_Decode$string),
-																																		function (from) {
-																																			return A2(
-																																				_elm_lang$core$Json_Decode$andThen,
-																																				A2(_elm_lang$core$Json_Decode_ops[':='], 'abbreviation', _elm_lang$core$Json_Decode$string),
-																																				function (abbreviation) {
-																																					return _elm_lang$core$Json_Decode$succeed(
-																																						{until: until, offset_utc: offset_utc, offset_std: offset_std, full_name: full_name, from: from, abbreviation: abbreviation});
-																																				});
-																																		});
-																																});
-																														});
-																												});
-																										})),
-																								function (timezone) {
-																									return A2(
-																										_elm_lang$core$Json_Decode$andThen,
-																										A2(_elm_lang$core$Json_Decode_ops[':='], 'second', _elm_lang$core$Json_Decode$int),
-																										function (second) {
-																											return A2(
-																												_elm_lang$core$Json_Decode$andThen,
-																												A2(_elm_lang$core$Json_Decode_ops[':='], 'month', _elm_lang$core$Json_Decode$int),
-																												function (month) {
-																													return A2(
-																														_elm_lang$core$Json_Decode$andThen,
-																														A2(_elm_lang$core$Json_Decode_ops[':='], 'minute', _elm_lang$core$Json_Decode$int),
-																														function (minute) {
-																															return A2(
-																																_elm_lang$core$Json_Decode$andThen,
-																																A2(_elm_lang$core$Json_Decode_ops[':='], 'millisecond', _elm_lang$core$Json_Decode$int),
-																																function (millisecond) {
-																																	return A2(
-																																		_elm_lang$core$Json_Decode$andThen,
-																																		A2(_elm_lang$core$Json_Decode_ops[':='], 'hour', _elm_lang$core$Json_Decode$int),
-																																		function (hour) {
-																																			return A2(
-																																				_elm_lang$core$Json_Decode$andThen,
-																																				A2(_elm_lang$core$Json_Decode_ops[':='], 'day', _elm_lang$core$Json_Decode$int),
-																																				function (day) {
-																																					return A2(
-																																						_elm_lang$core$Json_Decode$andThen,
-																																						A2(_elm_lang$core$Json_Decode_ops[':='], 'calendar', _elm_lang$core$Json_Decode$string),
-																																						function (calendar) {
-																																							return _elm_lang$core$Json_Decode$succeed(
-																																								{year: year, timezone: timezone, second: second, month: month, minute: minute, millisecond: millisecond, hour: hour, day: day, calendar: calendar});
-																																						});
-																																				});
-																																		});
-																																});
-																														});
-																												});
-																										});
-																								});
-																						})),
-																				function (inserted_at) {
-																					return A2(
-																						_elm_lang$core$Json_Decode$andThen,
-																						A2(
-																							_elm_lang$core$Json_Decode_ops[':='],
-																							'updated_at',
-																							A2(
-																								_elm_lang$core$Json_Decode$andThen,
-																								A2(_elm_lang$core$Json_Decode_ops[':='], 'year', _elm_lang$core$Json_Decode$int),
-																								function (year) {
-																									return A2(
-																										_elm_lang$core$Json_Decode$andThen,
-																										A2(
-																											_elm_lang$core$Json_Decode_ops[':='],
-																											'timezone',
-																											A2(
-																												_elm_lang$core$Json_Decode$andThen,
-																												A2(_elm_lang$core$Json_Decode_ops[':='], 'until', _elm_lang$core$Json_Decode$string),
-																												function (until) {
-																													return A2(
-																														_elm_lang$core$Json_Decode$andThen,
-																														A2(_elm_lang$core$Json_Decode_ops[':='], 'offset_utc', _elm_lang$core$Json_Decode$int),
-																														function (offset_utc) {
-																															return A2(
-																																_elm_lang$core$Json_Decode$andThen,
-																																A2(_elm_lang$core$Json_Decode_ops[':='], 'offset_std', _elm_lang$core$Json_Decode$int),
-																																function (offset_std) {
-																																	return A2(
-																																		_elm_lang$core$Json_Decode$andThen,
-																																		A2(_elm_lang$core$Json_Decode_ops[':='], 'full_name', _elm_lang$core$Json_Decode$string),
-																																		function (full_name) {
-																																			return A2(
-																																				_elm_lang$core$Json_Decode$andThen,
-																																				A2(_elm_lang$core$Json_Decode_ops[':='], 'from', _elm_lang$core$Json_Decode$string),
-																																				function (from) {
-																																					return A2(
-																																						_elm_lang$core$Json_Decode$andThen,
-																																						A2(_elm_lang$core$Json_Decode_ops[':='], 'abbreviation', _elm_lang$core$Json_Decode$string),
-																																						function (abbreviation) {
-																																							return _elm_lang$core$Json_Decode$succeed(
-																																								{until: until, offset_utc: offset_utc, offset_std: offset_std, full_name: full_name, from: from, abbreviation: abbreviation});
-																																						});
-																																				});
-																																		});
-																																});
-																														});
-																												})),
-																										function (timezone) {
-																											return A2(
-																												_elm_lang$core$Json_Decode$andThen,
-																												A2(_elm_lang$core$Json_Decode_ops[':='], 'second', _elm_lang$core$Json_Decode$int),
-																												function (second) {
-																													return A2(
-																														_elm_lang$core$Json_Decode$andThen,
-																														A2(_elm_lang$core$Json_Decode_ops[':='], 'month', _elm_lang$core$Json_Decode$int),
-																														function (month) {
-																															return A2(
-																																_elm_lang$core$Json_Decode$andThen,
-																																A2(_elm_lang$core$Json_Decode_ops[':='], 'minute', _elm_lang$core$Json_Decode$int),
-																																function (minute) {
-																																	return A2(
-																																		_elm_lang$core$Json_Decode$andThen,
-																																		A2(_elm_lang$core$Json_Decode_ops[':='], 'millisecond', _elm_lang$core$Json_Decode$int),
-																																		function (millisecond) {
-																																			return A2(
-																																				_elm_lang$core$Json_Decode$andThen,
-																																				A2(_elm_lang$core$Json_Decode_ops[':='], 'hour', _elm_lang$core$Json_Decode$int),
-																																				function (hour) {
-																																					return A2(
-																																						_elm_lang$core$Json_Decode$andThen,
-																																						A2(_elm_lang$core$Json_Decode_ops[':='], 'day', _elm_lang$core$Json_Decode$int),
-																																						function (day) {
-																																							return A2(
-																																								_elm_lang$core$Json_Decode$andThen,
-																																								A2(_elm_lang$core$Json_Decode_ops[':='], 'calendar', _elm_lang$core$Json_Decode$string),
-																																								function (calendar) {
-																																									return _elm_lang$core$Json_Decode$succeed(
-																																										{year: year, timezone: timezone, second: second, month: month, minute: minute, millisecond: millisecond, hour: hour, day: day, calendar: calendar});
-																																								});
-																																						});
-																																				});
-																																		});
-																																});
-																														});
-																												});
-																										});
-																								})),
-																						function (updated_at) {
-																							return _elm_lang$core$Json_Decode$succeed(
-																								{date: date, markdown: markdown, author: author, read_cnt: read_cnt, published: published, inserted_at: inserted_at, updated_at: updated_at});
-																						});
-																				});
-																		});
-																});
-														});
-												});
-										})),
-								function (cb_data) {
-									return _elm_lang$core$Json_Decode$succeed(
-										{topic: topic, msgID: msgID, msg: msg, cb_data: cb_data});
-								});
-						});
-				});
-		}));
-var _user$project$Main$onRoomInfo = _elm_lang$core$Native_Platform.incomingPort(
-	'onRoomInfo',
-	A2(
-		_elm_lang$core$Json_Decode$andThen,
-		A2(_elm_lang$core$Json_Decode_ops[':='], 'topic', _elm_lang$core$Json_Decode$string),
-		function (topic) {
-			return A2(
-				_elm_lang$core$Json_Decode$andThen,
-				A2(_elm_lang$core$Json_Decode_ops[':='], 'msgID', _elm_lang$core$Json_Decode$string),
-				function (msgID) {
-					return A2(
-						_elm_lang$core$Json_Decode$andThen,
-						A2(
-							_elm_lang$core$Json_Decode_ops[':='],
-							'msg',
-							_elm_lang$core$Json_Decode$succeed(
-								{})),
-						function (msg) {
-							return A2(
-								_elm_lang$core$Json_Decode$andThen,
-								A2(_elm_lang$core$Json_Decode_ops[':='], 'cb_data', _elm_lang$core$Json_Decode$int),
-								function (cb_data) {
-									return _elm_lang$core$Json_Decode$succeed(
-										{topic: topic, msgID: msgID, msg: msg, cb_data: cb_data});
-								});
-						});
-				});
-		}));
-var _user$project$Main$onRoomMsgsInit = _elm_lang$core$Native_Platform.incomingPort(
-	'onRoomMsgsInit',
-	A2(
-		_elm_lang$core$Json_Decode$andThen,
-		A2(_elm_lang$core$Json_Decode_ops[':='], 'topic', _elm_lang$core$Json_Decode$string),
-		function (topic) {
-			return A2(
-				_elm_lang$core$Json_Decode$andThen,
-				A2(_elm_lang$core$Json_Decode_ops[':='], 'msgID', _elm_lang$core$Json_Decode$string),
-				function (msgID) {
-					return A2(
-						_elm_lang$core$Json_Decode$andThen,
-						A2(
-							_elm_lang$core$Json_Decode_ops[':='],
-							'msg',
-							A2(
-								_elm_lang$core$Json_Decode$andThen,
-								A2(
-									_elm_lang$core$Json_Decode_ops[':='],
-									'msgs',
-									_elm_lang$core$Json_Decode$list(
-										A2(
-											_elm_lang$core$Json_Decode$andThen,
-											A2(_elm_lang$core$Json_Decode_ops[':='], 'date', _elm_lang$core$Json_Decode$string),
-											function (date) {
-												return A2(
-													_elm_lang$core$Json_Decode$andThen,
-													A2(_elm_lang$core$Json_Decode_ops[':='], 'markdown', _elm_lang$core$Json_Decode$string),
-													function (markdown) {
-														return A2(
-															_elm_lang$core$Json_Decode$andThen,
-															A2(_elm_lang$core$Json_Decode_ops[':='], 'author', _elm_lang$core$Json_Decode$string),
-															function (author) {
-																return A2(
-																	_elm_lang$core$Json_Decode$andThen,
-																	A2(_elm_lang$core$Json_Decode_ops[':='], 'read_cnt', _elm_lang$core$Json_Decode$int),
-																	function (read_cnt) {
-																		return A2(
-																			_elm_lang$core$Json_Decode$andThen,
-																			A2(_elm_lang$core$Json_Decode_ops[':='], 'published', _elm_lang$core$Json_Decode$bool),
-																			function (published) {
-																				return A2(
-																					_elm_lang$core$Json_Decode$andThen,
-																					A2(
-																						_elm_lang$core$Json_Decode_ops[':='],
-																						'inserted_at',
-																						A2(
-																							_elm_lang$core$Json_Decode$andThen,
-																							A2(_elm_lang$core$Json_Decode_ops[':='], 'year', _elm_lang$core$Json_Decode$int),
-																							function (year) {
-																								return A2(
-																									_elm_lang$core$Json_Decode$andThen,
-																									A2(
-																										_elm_lang$core$Json_Decode_ops[':='],
-																										'timezone',
-																										A2(
-																											_elm_lang$core$Json_Decode$andThen,
-																											A2(_elm_lang$core$Json_Decode_ops[':='], 'until', _elm_lang$core$Json_Decode$string),
-																											function (until) {
-																												return A2(
-																													_elm_lang$core$Json_Decode$andThen,
-																													A2(_elm_lang$core$Json_Decode_ops[':='], 'offset_utc', _elm_lang$core$Json_Decode$int),
-																													function (offset_utc) {
-																														return A2(
-																															_elm_lang$core$Json_Decode$andThen,
-																															A2(_elm_lang$core$Json_Decode_ops[':='], 'offset_std', _elm_lang$core$Json_Decode$int),
-																															function (offset_std) {
-																																return A2(
-																																	_elm_lang$core$Json_Decode$andThen,
-																																	A2(_elm_lang$core$Json_Decode_ops[':='], 'full_name', _elm_lang$core$Json_Decode$string),
-																																	function (full_name) {
-																																		return A2(
-																																			_elm_lang$core$Json_Decode$andThen,
-																																			A2(_elm_lang$core$Json_Decode_ops[':='], 'from', _elm_lang$core$Json_Decode$string),
-																																			function (from) {
-																																				return A2(
-																																					_elm_lang$core$Json_Decode$andThen,
-																																					A2(_elm_lang$core$Json_Decode_ops[':='], 'abbreviation', _elm_lang$core$Json_Decode$string),
-																																					function (abbreviation) {
-																																						return _elm_lang$core$Json_Decode$succeed(
-																																							{until: until, offset_utc: offset_utc, offset_std: offset_std, full_name: full_name, from: from, abbreviation: abbreviation});
-																																					});
-																																			});
-																																	});
-																															});
-																													});
-																											})),
-																									function (timezone) {
-																										return A2(
-																											_elm_lang$core$Json_Decode$andThen,
-																											A2(_elm_lang$core$Json_Decode_ops[':='], 'second', _elm_lang$core$Json_Decode$int),
-																											function (second) {
-																												return A2(
-																													_elm_lang$core$Json_Decode$andThen,
-																													A2(_elm_lang$core$Json_Decode_ops[':='], 'month', _elm_lang$core$Json_Decode$int),
-																													function (month) {
-																														return A2(
-																															_elm_lang$core$Json_Decode$andThen,
-																															A2(_elm_lang$core$Json_Decode_ops[':='], 'minute', _elm_lang$core$Json_Decode$int),
-																															function (minute) {
-																																return A2(
-																																	_elm_lang$core$Json_Decode$andThen,
-																																	A2(_elm_lang$core$Json_Decode_ops[':='], 'millisecond', _elm_lang$core$Json_Decode$int),
-																																	function (millisecond) {
-																																		return A2(
-																																			_elm_lang$core$Json_Decode$andThen,
-																																			A2(_elm_lang$core$Json_Decode_ops[':='], 'hour', _elm_lang$core$Json_Decode$int),
-																																			function (hour) {
-																																				return A2(
-																																					_elm_lang$core$Json_Decode$andThen,
-																																					A2(_elm_lang$core$Json_Decode_ops[':='], 'day', _elm_lang$core$Json_Decode$int),
-																																					function (day) {
-																																						return A2(
-																																							_elm_lang$core$Json_Decode$andThen,
-																																							A2(_elm_lang$core$Json_Decode_ops[':='], 'calendar', _elm_lang$core$Json_Decode$string),
-																																							function (calendar) {
-																																								return _elm_lang$core$Json_Decode$succeed(
-																																									{year: year, timezone: timezone, second: second, month: month, minute: minute, millisecond: millisecond, hour: hour, day: day, calendar: calendar});
-																																							});
-																																					});
-																																			});
-																																	});
-																															});
-																													});
-																											});
-																									});
-																							})),
-																					function (inserted_at) {
-																						return A2(
-																							_elm_lang$core$Json_Decode$andThen,
-																							A2(
-																								_elm_lang$core$Json_Decode_ops[':='],
-																								'updated_at',
-																								A2(
-																									_elm_lang$core$Json_Decode$andThen,
-																									A2(_elm_lang$core$Json_Decode_ops[':='], 'year', _elm_lang$core$Json_Decode$int),
-																									function (year) {
-																										return A2(
-																											_elm_lang$core$Json_Decode$andThen,
-																											A2(
-																												_elm_lang$core$Json_Decode_ops[':='],
-																												'timezone',
-																												A2(
-																													_elm_lang$core$Json_Decode$andThen,
-																													A2(_elm_lang$core$Json_Decode_ops[':='], 'until', _elm_lang$core$Json_Decode$string),
-																													function (until) {
-																														return A2(
-																															_elm_lang$core$Json_Decode$andThen,
-																															A2(_elm_lang$core$Json_Decode_ops[':='], 'offset_utc', _elm_lang$core$Json_Decode$int),
-																															function (offset_utc) {
-																																return A2(
-																																	_elm_lang$core$Json_Decode$andThen,
-																																	A2(_elm_lang$core$Json_Decode_ops[':='], 'offset_std', _elm_lang$core$Json_Decode$int),
-																																	function (offset_std) {
-																																		return A2(
-																																			_elm_lang$core$Json_Decode$andThen,
-																																			A2(_elm_lang$core$Json_Decode_ops[':='], 'full_name', _elm_lang$core$Json_Decode$string),
-																																			function (full_name) {
-																																				return A2(
-																																					_elm_lang$core$Json_Decode$andThen,
-																																					A2(_elm_lang$core$Json_Decode_ops[':='], 'from', _elm_lang$core$Json_Decode$string),
-																																					function (from) {
-																																						return A2(
-																																							_elm_lang$core$Json_Decode$andThen,
-																																							A2(_elm_lang$core$Json_Decode_ops[':='], 'abbreviation', _elm_lang$core$Json_Decode$string),
-																																							function (abbreviation) {
-																																								return _elm_lang$core$Json_Decode$succeed(
-																																									{until: until, offset_utc: offset_utc, offset_std: offset_std, full_name: full_name, from: from, abbreviation: abbreviation});
-																																							});
-																																					});
-																																			});
-																																	});
-																															});
-																													})),
-																											function (timezone) {
-																												return A2(
-																													_elm_lang$core$Json_Decode$andThen,
-																													A2(_elm_lang$core$Json_Decode_ops[':='], 'second', _elm_lang$core$Json_Decode$int),
-																													function (second) {
-																														return A2(
-																															_elm_lang$core$Json_Decode$andThen,
-																															A2(_elm_lang$core$Json_Decode_ops[':='], 'month', _elm_lang$core$Json_Decode$int),
-																															function (month) {
-																																return A2(
-																																	_elm_lang$core$Json_Decode$andThen,
-																																	A2(_elm_lang$core$Json_Decode_ops[':='], 'minute', _elm_lang$core$Json_Decode$int),
-																																	function (minute) {
-																																		return A2(
-																																			_elm_lang$core$Json_Decode$andThen,
-																																			A2(_elm_lang$core$Json_Decode_ops[':='], 'millisecond', _elm_lang$core$Json_Decode$int),
-																																			function (millisecond) {
-																																				return A2(
-																																					_elm_lang$core$Json_Decode$andThen,
-																																					A2(_elm_lang$core$Json_Decode_ops[':='], 'hour', _elm_lang$core$Json_Decode$int),
-																																					function (hour) {
-																																						return A2(
-																																							_elm_lang$core$Json_Decode$andThen,
-																																							A2(_elm_lang$core$Json_Decode_ops[':='], 'day', _elm_lang$core$Json_Decode$int),
-																																							function (day) {
-																																								return A2(
-																																									_elm_lang$core$Json_Decode$andThen,
-																																									A2(_elm_lang$core$Json_Decode_ops[':='], 'calendar', _elm_lang$core$Json_Decode$string),
-																																									function (calendar) {
-																																										return _elm_lang$core$Json_Decode$succeed(
-																																											{year: year, timezone: timezone, second: second, month: month, minute: minute, millisecond: millisecond, hour: hour, day: day, calendar: calendar});
-																																									});
-																																							});
-																																					});
-																																			});
-																																	});
-																															});
-																													});
-																											});
-																									})),
-																							function (updated_at) {
-																								return _elm_lang$core$Json_Decode$succeed(
-																									{date: date, markdown: markdown, author: author, read_cnt: read_cnt, published: published, inserted_at: inserted_at, updated_at: updated_at});
-																							});
-																					});
-																			});
-																	});
-															});
-													});
-											}))),
-								function (msgs) {
-									return _elm_lang$core$Json_Decode$succeed(
-										{msgs: msgs});
-								})),
-						function (msg) {
-							return A2(
-								_elm_lang$core$Json_Decode$andThen,
-								A2(_elm_lang$core$Json_Decode_ops[':='], 'cb_data', _elm_lang$core$Json_Decode$int),
-								function (cb_data) {
-									return _elm_lang$core$Json_Decode$succeed(
-										{topic: topic, msgID: msgID, msg: msg, cb_data: cb_data});
-								});
-						});
-				});
-		}));
-var _user$project$Main$onRoomMsgsAdd = _elm_lang$core$Native_Platform.incomingPort(
-	'onRoomMsgsAdd',
-	A2(
-		_elm_lang$core$Json_Decode$andThen,
-		A2(_elm_lang$core$Json_Decode_ops[':='], 'topic', _elm_lang$core$Json_Decode$string),
-		function (topic) {
-			return A2(
-				_elm_lang$core$Json_Decode$andThen,
-				A2(_elm_lang$core$Json_Decode_ops[':='], 'msgID', _elm_lang$core$Json_Decode$string),
-				function (msgID) {
-					return A2(
-						_elm_lang$core$Json_Decode$andThen,
-						A2(
-							_elm_lang$core$Json_Decode_ops[':='],
-							'msg',
-							A2(
-								_elm_lang$core$Json_Decode$andThen,
-								A2(
-									_elm_lang$core$Json_Decode_ops[':='],
-									'msgs',
-									_elm_lang$core$Json_Decode$list(
-										A2(
-											_elm_lang$core$Json_Decode$andThen,
-											A2(_elm_lang$core$Json_Decode_ops[':='], 'date', _elm_lang$core$Json_Decode$string),
-											function (date) {
-												return A2(
-													_elm_lang$core$Json_Decode$andThen,
-													A2(_elm_lang$core$Json_Decode_ops[':='], 'markdown', _elm_lang$core$Json_Decode$string),
-													function (markdown) {
-														return A2(
-															_elm_lang$core$Json_Decode$andThen,
-															A2(_elm_lang$core$Json_Decode_ops[':='], 'author', _elm_lang$core$Json_Decode$string),
-															function (author) {
-																return A2(
-																	_elm_lang$core$Json_Decode$andThen,
-																	A2(_elm_lang$core$Json_Decode_ops[':='], 'read_cnt', _elm_lang$core$Json_Decode$int),
-																	function (read_cnt) {
-																		return A2(
-																			_elm_lang$core$Json_Decode$andThen,
-																			A2(_elm_lang$core$Json_Decode_ops[':='], 'published', _elm_lang$core$Json_Decode$bool),
-																			function (published) {
-																				return A2(
-																					_elm_lang$core$Json_Decode$andThen,
-																					A2(
-																						_elm_lang$core$Json_Decode_ops[':='],
-																						'inserted_at',
-																						A2(
-																							_elm_lang$core$Json_Decode$andThen,
-																							A2(_elm_lang$core$Json_Decode_ops[':='], 'year', _elm_lang$core$Json_Decode$int),
-																							function (year) {
-																								return A2(
-																									_elm_lang$core$Json_Decode$andThen,
-																									A2(
-																										_elm_lang$core$Json_Decode_ops[':='],
-																										'timezone',
-																										A2(
-																											_elm_lang$core$Json_Decode$andThen,
-																											A2(_elm_lang$core$Json_Decode_ops[':='], 'until', _elm_lang$core$Json_Decode$string),
-																											function (until) {
-																												return A2(
-																													_elm_lang$core$Json_Decode$andThen,
-																													A2(_elm_lang$core$Json_Decode_ops[':='], 'offset_utc', _elm_lang$core$Json_Decode$int),
-																													function (offset_utc) {
-																														return A2(
-																															_elm_lang$core$Json_Decode$andThen,
-																															A2(_elm_lang$core$Json_Decode_ops[':='], 'offset_std', _elm_lang$core$Json_Decode$int),
-																															function (offset_std) {
-																																return A2(
-																																	_elm_lang$core$Json_Decode$andThen,
-																																	A2(_elm_lang$core$Json_Decode_ops[':='], 'full_name', _elm_lang$core$Json_Decode$string),
-																																	function (full_name) {
-																																		return A2(
-																																			_elm_lang$core$Json_Decode$andThen,
-																																			A2(_elm_lang$core$Json_Decode_ops[':='], 'from', _elm_lang$core$Json_Decode$string),
-																																			function (from) {
-																																				return A2(
-																																					_elm_lang$core$Json_Decode$andThen,
-																																					A2(_elm_lang$core$Json_Decode_ops[':='], 'abbreviation', _elm_lang$core$Json_Decode$string),
-																																					function (abbreviation) {
-																																						return _elm_lang$core$Json_Decode$succeed(
-																																							{until: until, offset_utc: offset_utc, offset_std: offset_std, full_name: full_name, from: from, abbreviation: abbreviation});
-																																					});
-																																			});
-																																	});
-																															});
-																													});
-																											})),
-																									function (timezone) {
-																										return A2(
-																											_elm_lang$core$Json_Decode$andThen,
-																											A2(_elm_lang$core$Json_Decode_ops[':='], 'second', _elm_lang$core$Json_Decode$int),
-																											function (second) {
-																												return A2(
-																													_elm_lang$core$Json_Decode$andThen,
-																													A2(_elm_lang$core$Json_Decode_ops[':='], 'month', _elm_lang$core$Json_Decode$int),
-																													function (month) {
-																														return A2(
-																															_elm_lang$core$Json_Decode$andThen,
-																															A2(_elm_lang$core$Json_Decode_ops[':='], 'minute', _elm_lang$core$Json_Decode$int),
-																															function (minute) {
-																																return A2(
-																																	_elm_lang$core$Json_Decode$andThen,
-																																	A2(_elm_lang$core$Json_Decode_ops[':='], 'millisecond', _elm_lang$core$Json_Decode$int),
-																																	function (millisecond) {
-																																		return A2(
-																																			_elm_lang$core$Json_Decode$andThen,
-																																			A2(_elm_lang$core$Json_Decode_ops[':='], 'hour', _elm_lang$core$Json_Decode$int),
-																																			function (hour) {
-																																				return A2(
-																																					_elm_lang$core$Json_Decode$andThen,
-																																					A2(_elm_lang$core$Json_Decode_ops[':='], 'day', _elm_lang$core$Json_Decode$int),
-																																					function (day) {
-																																						return A2(
-																																							_elm_lang$core$Json_Decode$andThen,
-																																							A2(_elm_lang$core$Json_Decode_ops[':='], 'calendar', _elm_lang$core$Json_Decode$string),
-																																							function (calendar) {
-																																								return _elm_lang$core$Json_Decode$succeed(
-																																									{year: year, timezone: timezone, second: second, month: month, minute: minute, millisecond: millisecond, hour: hour, day: day, calendar: calendar});
-																																							});
-																																					});
-																																			});
-																																	});
-																															});
-																													});
-																											});
-																									});
-																							})),
-																					function (inserted_at) {
-																						return A2(
-																							_elm_lang$core$Json_Decode$andThen,
-																							A2(
-																								_elm_lang$core$Json_Decode_ops[':='],
-																								'updated_at',
-																								A2(
-																									_elm_lang$core$Json_Decode$andThen,
-																									A2(_elm_lang$core$Json_Decode_ops[':='], 'year', _elm_lang$core$Json_Decode$int),
-																									function (year) {
-																										return A2(
-																											_elm_lang$core$Json_Decode$andThen,
-																											A2(
-																												_elm_lang$core$Json_Decode_ops[':='],
-																												'timezone',
-																												A2(
-																													_elm_lang$core$Json_Decode$andThen,
-																													A2(_elm_lang$core$Json_Decode_ops[':='], 'until', _elm_lang$core$Json_Decode$string),
-																													function (until) {
-																														return A2(
-																															_elm_lang$core$Json_Decode$andThen,
-																															A2(_elm_lang$core$Json_Decode_ops[':='], 'offset_utc', _elm_lang$core$Json_Decode$int),
-																															function (offset_utc) {
-																																return A2(
-																																	_elm_lang$core$Json_Decode$andThen,
-																																	A2(_elm_lang$core$Json_Decode_ops[':='], 'offset_std', _elm_lang$core$Json_Decode$int),
-																																	function (offset_std) {
-																																		return A2(
-																																			_elm_lang$core$Json_Decode$andThen,
-																																			A2(_elm_lang$core$Json_Decode_ops[':='], 'full_name', _elm_lang$core$Json_Decode$string),
-																																			function (full_name) {
-																																				return A2(
-																																					_elm_lang$core$Json_Decode$andThen,
-																																					A2(_elm_lang$core$Json_Decode_ops[':='], 'from', _elm_lang$core$Json_Decode$string),
-																																					function (from) {
-																																						return A2(
-																																							_elm_lang$core$Json_Decode$andThen,
-																																							A2(_elm_lang$core$Json_Decode_ops[':='], 'abbreviation', _elm_lang$core$Json_Decode$string),
-																																							function (abbreviation) {
-																																								return _elm_lang$core$Json_Decode$succeed(
-																																									{until: until, offset_utc: offset_utc, offset_std: offset_std, full_name: full_name, from: from, abbreviation: abbreviation});
-																																							});
-																																					});
-																																			});
-																																	});
-																															});
-																													})),
-																											function (timezone) {
-																												return A2(
-																													_elm_lang$core$Json_Decode$andThen,
-																													A2(_elm_lang$core$Json_Decode_ops[':='], 'second', _elm_lang$core$Json_Decode$int),
-																													function (second) {
-																														return A2(
-																															_elm_lang$core$Json_Decode$andThen,
-																															A2(_elm_lang$core$Json_Decode_ops[':='], 'month', _elm_lang$core$Json_Decode$int),
-																															function (month) {
-																																return A2(
-																																	_elm_lang$core$Json_Decode$andThen,
-																																	A2(_elm_lang$core$Json_Decode_ops[':='], 'minute', _elm_lang$core$Json_Decode$int),
-																																	function (minute) {
-																																		return A2(
-																																			_elm_lang$core$Json_Decode$andThen,
-																																			A2(_elm_lang$core$Json_Decode_ops[':='], 'millisecond', _elm_lang$core$Json_Decode$int),
-																																			function (millisecond) {
-																																				return A2(
-																																					_elm_lang$core$Json_Decode$andThen,
-																																					A2(_elm_lang$core$Json_Decode_ops[':='], 'hour', _elm_lang$core$Json_Decode$int),
-																																					function (hour) {
-																																						return A2(
-																																							_elm_lang$core$Json_Decode$andThen,
-																																							A2(_elm_lang$core$Json_Decode_ops[':='], 'day', _elm_lang$core$Json_Decode$int),
-																																							function (day) {
-																																								return A2(
-																																									_elm_lang$core$Json_Decode$andThen,
-																																									A2(_elm_lang$core$Json_Decode_ops[':='], 'calendar', _elm_lang$core$Json_Decode$string),
-																																									function (calendar) {
-																																										return _elm_lang$core$Json_Decode$succeed(
-																																											{year: year, timezone: timezone, second: second, month: month, minute: minute, millisecond: millisecond, hour: hour, day: day, calendar: calendar});
-																																									});
-																																							});
-																																					});
-																																			});
-																																	});
-																															});
-																													});
-																											});
-																									})),
-																							function (updated_at) {
-																								return _elm_lang$core$Json_Decode$succeed(
-																									{date: date, markdown: markdown, author: author, read_cnt: read_cnt, published: published, inserted_at: inserted_at, updated_at: updated_at});
-																							});
-																					});
-																			});
-																	});
-															});
-													});
-											}))),
-								function (msgs) {
-									return _elm_lang$core$Json_Decode$succeed(
-										{msgs: msgs});
-								})),
-						function (msg) {
-							return A2(
-								_elm_lang$core$Json_Decode$andThen,
-								A2(_elm_lang$core$Json_Decode_ops[':='], 'cb_data', _elm_lang$core$Json_Decode$int),
-								function (cb_data) {
-									return _elm_lang$core$Json_Decode$succeed(
-										{topic: topic, msgID: msgID, msg: msg, cb_data: cb_data});
-								});
-						});
-				});
-		}));
-var _user$project$Main$onRoomSyncState = _elm_lang$core$Native_Platform.incomingPort(
-	'onRoomSyncState',
-	A2(
-		_elm_lang$core$Json_Decode$andThen,
-		A2(_elm_lang$core$Json_Decode_ops[':='], 'topic', _elm_lang$core$Json_Decode$string),
-		function (topic) {
-			return A2(
-				_elm_lang$core$Json_Decode$andThen,
-				A2(_elm_lang$core$Json_Decode_ops[':='], 'msgID', _elm_lang$core$Json_Decode$string),
-				function (msgID) {
-					return A2(
-						_elm_lang$core$Json_Decode$andThen,
-						A2(
-							_elm_lang$core$Json_Decode_ops[':='],
-							'msg',
-							_elm_lang$core$Json_Decode$list(
-								A3(
-									_elm_lang$core$Json_Decode$tuple2,
-									F2(
-										function (x1, x2) {
-											return {ctor: '_Tuple2', _0: x1, _1: x2};
-										}),
-									_elm_lang$core$Json_Decode$string,
-									A2(
-										_elm_lang$core$Json_Decode$andThen,
-										A2(
-											_elm_lang$core$Json_Decode_ops[':='],
-											'metas',
-											_elm_lang$core$Json_Decode$list(
-												A2(
-													_elm_lang$core$Json_Decode$andThen,
-													A2(_elm_lang$core$Json_Decode_ops[':='], 'phx_ref', _elm_lang$core$Json_Decode$string),
-													function (phx_ref) {
-														return A2(
-															_elm_lang$core$Json_Decode$andThen,
-															A2(_elm_lang$core$Json_Decode_ops[':='], 'loc', _elm_lang$core$Json_Decode$string),
-															function (loc) {
-																return A2(
-																	_elm_lang$core$Json_Decode$andThen,
-																	A2(
-																		_elm_lang$core$Json_Decode_ops[':='],
-																		'online_at',
-																		A2(
-																			_elm_lang$core$Json_Decode$andThen,
-																			A2(_elm_lang$core$Json_Decode_ops[':='], 'year', _elm_lang$core$Json_Decode$int),
-																			function (year) {
-																				return A2(
-																					_elm_lang$core$Json_Decode$andThen,
-																					A2(
-																						_elm_lang$core$Json_Decode_ops[':='],
-																						'timezone',
-																						A2(
-																							_elm_lang$core$Json_Decode$andThen,
-																							A2(_elm_lang$core$Json_Decode_ops[':='], 'until', _elm_lang$core$Json_Decode$string),
-																							function (until) {
-																								return A2(
-																									_elm_lang$core$Json_Decode$andThen,
-																									A2(_elm_lang$core$Json_Decode_ops[':='], 'offset_utc', _elm_lang$core$Json_Decode$int),
-																									function (offset_utc) {
-																										return A2(
-																											_elm_lang$core$Json_Decode$andThen,
-																											A2(_elm_lang$core$Json_Decode_ops[':='], 'offset_std', _elm_lang$core$Json_Decode$int),
-																											function (offset_std) {
-																												return A2(
-																													_elm_lang$core$Json_Decode$andThen,
-																													A2(_elm_lang$core$Json_Decode_ops[':='], 'full_name', _elm_lang$core$Json_Decode$string),
-																													function (full_name) {
-																														return A2(
-																															_elm_lang$core$Json_Decode$andThen,
-																															A2(_elm_lang$core$Json_Decode_ops[':='], 'from', _elm_lang$core$Json_Decode$string),
-																															function (from) {
-																																return A2(
-																																	_elm_lang$core$Json_Decode$andThen,
-																																	A2(_elm_lang$core$Json_Decode_ops[':='], 'abbreviation', _elm_lang$core$Json_Decode$string),
-																																	function (abbreviation) {
-																																		return _elm_lang$core$Json_Decode$succeed(
-																																			{until: until, offset_utc: offset_utc, offset_std: offset_std, full_name: full_name, from: from, abbreviation: abbreviation});
-																																	});
-																															});
-																													});
-																											});
-																									});
-																							})),
-																					function (timezone) {
-																						return A2(
-																							_elm_lang$core$Json_Decode$andThen,
-																							A2(_elm_lang$core$Json_Decode_ops[':='], 'second', _elm_lang$core$Json_Decode$int),
-																							function (second) {
-																								return A2(
-																									_elm_lang$core$Json_Decode$andThen,
-																									A2(_elm_lang$core$Json_Decode_ops[':='], 'month', _elm_lang$core$Json_Decode$int),
-																									function (month) {
-																										return A2(
-																											_elm_lang$core$Json_Decode$andThen,
-																											A2(_elm_lang$core$Json_Decode_ops[':='], 'minute', _elm_lang$core$Json_Decode$int),
-																											function (minute) {
-																												return A2(
-																													_elm_lang$core$Json_Decode$andThen,
-																													A2(_elm_lang$core$Json_Decode_ops[':='], 'millisecond', _elm_lang$core$Json_Decode$int),
-																													function (millisecond) {
-																														return A2(
-																															_elm_lang$core$Json_Decode$andThen,
-																															A2(_elm_lang$core$Json_Decode_ops[':='], 'hour', _elm_lang$core$Json_Decode$int),
-																															function (hour) {
-																																return A2(
-																																	_elm_lang$core$Json_Decode$andThen,
-																																	A2(_elm_lang$core$Json_Decode_ops[':='], 'day', _elm_lang$core$Json_Decode$int),
-																																	function (day) {
-																																		return A2(
-																																			_elm_lang$core$Json_Decode$andThen,
-																																			A2(_elm_lang$core$Json_Decode_ops[':='], 'calendar', _elm_lang$core$Json_Decode$string),
-																																			function (calendar) {
-																																				return _elm_lang$core$Json_Decode$succeed(
-																																					{year: year, timezone: timezone, second: second, month: month, minute: minute, millisecond: millisecond, hour: hour, day: day, calendar: calendar});
-																																			});
-																																	});
-																															});
-																													});
-																											});
-																									});
-																							});
-																					});
-																			})),
-																	function (online_at) {
-																		return A2(
-																			_elm_lang$core$Json_Decode$andThen,
-																			A2(_elm_lang$core$Json_Decode_ops[':='], 'nick', _elm_lang$core$Json_Decode$string),
-																			function (nick) {
-																				return _elm_lang$core$Json_Decode$succeed(
-																					{phx_ref: phx_ref, loc: loc, online_at: online_at, nick: nick});
-																			});
-																	});
-															});
-													}))),
-										function (metas) {
-											return _elm_lang$core$Json_Decode$succeed(
-												{metas: metas});
-										})))),
-						function (msg) {
-							return A2(
-								_elm_lang$core$Json_Decode$andThen,
-								A2(_elm_lang$core$Json_Decode_ops[':='], 'cb_data', _elm_lang$core$Json_Decode$int),
-								function (cb_data) {
-									return _elm_lang$core$Json_Decode$succeed(
-										{topic: topic, msgID: msgID, msg: msg, cb_data: cb_data});
-								});
-						});
-				});
-		}));
-var _user$project$Main$onRoomSyncJoin = _elm_lang$core$Native_Platform.incomingPort(
-	'onRoomSyncJoin',
-	A2(
-		_elm_lang$core$Json_Decode$andThen,
-		A2(_elm_lang$core$Json_Decode_ops[':='], 'topic', _elm_lang$core$Json_Decode$string),
-		function (topic) {
-			return A2(
-				_elm_lang$core$Json_Decode$andThen,
-				A2(_elm_lang$core$Json_Decode_ops[':='], 'msgID', _elm_lang$core$Json_Decode$string),
-				function (msgID) {
-					return A2(
-						_elm_lang$core$Json_Decode$andThen,
-						A2(
-							_elm_lang$core$Json_Decode_ops[':='],
-							'msg',
-							A2(
-								_elm_lang$core$Json_Decode$andThen,
-								A2(_elm_lang$core$Json_Decode_ops[':='], 'id', _elm_lang$core$Json_Decode$string),
-								function (id) {
-									return A2(
-										_elm_lang$core$Json_Decode$andThen,
-										A2(
-											_elm_lang$core$Json_Decode_ops[':='],
-											'old',
-											_elm_lang$core$Json_Decode$oneOf(
-												_elm_lang$core$Native_List.fromArray(
-													[
-														_elm_lang$core$Json_Decode$null(_elm_lang$core$Maybe$Nothing),
-														A2(
-														_elm_lang$core$Json_Decode$map,
-														_elm_lang$core$Maybe$Just,
-														A3(
-															_elm_lang$core$Json_Decode$tuple2,
-															F2(
-																function (x1, x2) {
-																	return {ctor: '_Tuple2', _0: x1, _1: x2};
-																}),
-															_elm_lang$core$Json_Decode$string,
-															_elm_lang$core$Json_Decode$list(
-																A2(
-																	_elm_lang$core$Json_Decode$andThen,
-																	A2(_elm_lang$core$Json_Decode_ops[':='], 'phx_ref', _elm_lang$core$Json_Decode$string),
-																	function (phx_ref) {
-																		return A2(
-																			_elm_lang$core$Json_Decode$andThen,
-																			A2(_elm_lang$core$Json_Decode_ops[':='], 'loc', _elm_lang$core$Json_Decode$string),
-																			function (loc) {
-																				return A2(
-																					_elm_lang$core$Json_Decode$andThen,
-																					A2(
-																						_elm_lang$core$Json_Decode_ops[':='],
-																						'online_at',
-																						A2(
-																							_elm_lang$core$Json_Decode$andThen,
-																							A2(_elm_lang$core$Json_Decode_ops[':='], 'year', _elm_lang$core$Json_Decode$int),
-																							function (year) {
-																								return A2(
-																									_elm_lang$core$Json_Decode$andThen,
-																									A2(
-																										_elm_lang$core$Json_Decode_ops[':='],
-																										'timezone',
-																										A2(
-																											_elm_lang$core$Json_Decode$andThen,
-																											A2(_elm_lang$core$Json_Decode_ops[':='], 'until', _elm_lang$core$Json_Decode$string),
-																											function (until) {
-																												return A2(
-																													_elm_lang$core$Json_Decode$andThen,
-																													A2(_elm_lang$core$Json_Decode_ops[':='], 'offset_utc', _elm_lang$core$Json_Decode$int),
-																													function (offset_utc) {
-																														return A2(
-																															_elm_lang$core$Json_Decode$andThen,
-																															A2(_elm_lang$core$Json_Decode_ops[':='], 'offset_std', _elm_lang$core$Json_Decode$int),
-																															function (offset_std) {
-																																return A2(
-																																	_elm_lang$core$Json_Decode$andThen,
-																																	A2(_elm_lang$core$Json_Decode_ops[':='], 'full_name', _elm_lang$core$Json_Decode$string),
-																																	function (full_name) {
-																																		return A2(
-																																			_elm_lang$core$Json_Decode$andThen,
-																																			A2(_elm_lang$core$Json_Decode_ops[':='], 'from', _elm_lang$core$Json_Decode$string),
-																																			function (from) {
-																																				return A2(
-																																					_elm_lang$core$Json_Decode$andThen,
-																																					A2(_elm_lang$core$Json_Decode_ops[':='], 'abbreviation', _elm_lang$core$Json_Decode$string),
-																																					function (abbreviation) {
-																																						return _elm_lang$core$Json_Decode$succeed(
-																																							{until: until, offset_utc: offset_utc, offset_std: offset_std, full_name: full_name, from: from, abbreviation: abbreviation});
-																																					});
-																																			});
-																																	});
-																															});
-																													});
-																											})),
-																									function (timezone) {
-																										return A2(
-																											_elm_lang$core$Json_Decode$andThen,
-																											A2(_elm_lang$core$Json_Decode_ops[':='], 'second', _elm_lang$core$Json_Decode$int),
-																											function (second) {
-																												return A2(
-																													_elm_lang$core$Json_Decode$andThen,
-																													A2(_elm_lang$core$Json_Decode_ops[':='], 'month', _elm_lang$core$Json_Decode$int),
-																													function (month) {
-																														return A2(
-																															_elm_lang$core$Json_Decode$andThen,
-																															A2(_elm_lang$core$Json_Decode_ops[':='], 'minute', _elm_lang$core$Json_Decode$int),
-																															function (minute) {
-																																return A2(
-																																	_elm_lang$core$Json_Decode$andThen,
-																																	A2(_elm_lang$core$Json_Decode_ops[':='], 'millisecond', _elm_lang$core$Json_Decode$int),
-																																	function (millisecond) {
-																																		return A2(
-																																			_elm_lang$core$Json_Decode$andThen,
-																																			A2(_elm_lang$core$Json_Decode_ops[':='], 'hour', _elm_lang$core$Json_Decode$int),
-																																			function (hour) {
-																																				return A2(
-																																					_elm_lang$core$Json_Decode$andThen,
-																																					A2(_elm_lang$core$Json_Decode_ops[':='], 'day', _elm_lang$core$Json_Decode$int),
-																																					function (day) {
-																																						return A2(
-																																							_elm_lang$core$Json_Decode$andThen,
-																																							A2(_elm_lang$core$Json_Decode_ops[':='], 'calendar', _elm_lang$core$Json_Decode$string),
-																																							function (calendar) {
-																																								return _elm_lang$core$Json_Decode$succeed(
-																																									{year: year, timezone: timezone, second: second, month: month, minute: minute, millisecond: millisecond, hour: hour, day: day, calendar: calendar});
-																																							});
-																																					});
-																																			});
-																																	});
-																															});
-																													});
-																											});
-																									});
-																							})),
-																					function (online_at) {
-																						return A2(
-																							_elm_lang$core$Json_Decode$andThen,
-																							A2(_elm_lang$core$Json_Decode_ops[':='], 'nick', _elm_lang$core$Json_Decode$string),
-																							function (nick) {
-																								return _elm_lang$core$Json_Decode$succeed(
-																									{phx_ref: phx_ref, loc: loc, online_at: online_at, nick: nick});
-																							});
-																					});
-																			});
-																	}))))
-													]))),
-										function (old) {
-											return A2(
-												_elm_lang$core$Json_Decode$andThen,
-												A2(
-													_elm_lang$core$Json_Decode_ops[':='],
-													'new',
-													_elm_lang$core$Json_Decode$list(
-														A3(
-															_elm_lang$core$Json_Decode$tuple2,
-															F2(
-																function (x1, x2) {
-																	return {ctor: '_Tuple2', _0: x1, _1: x2};
-																}),
-															_elm_lang$core$Json_Decode$string,
-															_elm_lang$core$Json_Decode$list(
-																A2(
-																	_elm_lang$core$Json_Decode$andThen,
-																	A2(_elm_lang$core$Json_Decode_ops[':='], 'phx_ref', _elm_lang$core$Json_Decode$string),
-																	function (phx_ref) {
-																		return A2(
-																			_elm_lang$core$Json_Decode$andThen,
-																			A2(_elm_lang$core$Json_Decode_ops[':='], 'loc', _elm_lang$core$Json_Decode$string),
-																			function (loc) {
-																				return A2(
-																					_elm_lang$core$Json_Decode$andThen,
-																					A2(
-																						_elm_lang$core$Json_Decode_ops[':='],
-																						'online_at',
-																						A2(
-																							_elm_lang$core$Json_Decode$andThen,
-																							A2(_elm_lang$core$Json_Decode_ops[':='], 'year', _elm_lang$core$Json_Decode$int),
-																							function (year) {
-																								return A2(
-																									_elm_lang$core$Json_Decode$andThen,
-																									A2(
-																										_elm_lang$core$Json_Decode_ops[':='],
-																										'timezone',
-																										A2(
-																											_elm_lang$core$Json_Decode$andThen,
-																											A2(_elm_lang$core$Json_Decode_ops[':='], 'until', _elm_lang$core$Json_Decode$string),
-																											function (until) {
-																												return A2(
-																													_elm_lang$core$Json_Decode$andThen,
-																													A2(_elm_lang$core$Json_Decode_ops[':='], 'offset_utc', _elm_lang$core$Json_Decode$int),
-																													function (offset_utc) {
-																														return A2(
-																															_elm_lang$core$Json_Decode$andThen,
-																															A2(_elm_lang$core$Json_Decode_ops[':='], 'offset_std', _elm_lang$core$Json_Decode$int),
-																															function (offset_std) {
-																																return A2(
-																																	_elm_lang$core$Json_Decode$andThen,
-																																	A2(_elm_lang$core$Json_Decode_ops[':='], 'full_name', _elm_lang$core$Json_Decode$string),
-																																	function (full_name) {
-																																		return A2(
-																																			_elm_lang$core$Json_Decode$andThen,
-																																			A2(_elm_lang$core$Json_Decode_ops[':='], 'from', _elm_lang$core$Json_Decode$string),
-																																			function (from) {
-																																				return A2(
-																																					_elm_lang$core$Json_Decode$andThen,
-																																					A2(_elm_lang$core$Json_Decode_ops[':='], 'abbreviation', _elm_lang$core$Json_Decode$string),
-																																					function (abbreviation) {
-																																						return _elm_lang$core$Json_Decode$succeed(
-																																							{until: until, offset_utc: offset_utc, offset_std: offset_std, full_name: full_name, from: from, abbreviation: abbreviation});
-																																					});
-																																			});
-																																	});
-																															});
-																													});
-																											})),
-																									function (timezone) {
-																										return A2(
-																											_elm_lang$core$Json_Decode$andThen,
-																											A2(_elm_lang$core$Json_Decode_ops[':='], 'second', _elm_lang$core$Json_Decode$int),
-																											function (second) {
-																												return A2(
-																													_elm_lang$core$Json_Decode$andThen,
-																													A2(_elm_lang$core$Json_Decode_ops[':='], 'month', _elm_lang$core$Json_Decode$int),
-																													function (month) {
-																														return A2(
-																															_elm_lang$core$Json_Decode$andThen,
-																															A2(_elm_lang$core$Json_Decode_ops[':='], 'minute', _elm_lang$core$Json_Decode$int),
-																															function (minute) {
-																																return A2(
-																																	_elm_lang$core$Json_Decode$andThen,
-																																	A2(_elm_lang$core$Json_Decode_ops[':='], 'millisecond', _elm_lang$core$Json_Decode$int),
-																																	function (millisecond) {
-																																		return A2(
-																																			_elm_lang$core$Json_Decode$andThen,
-																																			A2(_elm_lang$core$Json_Decode_ops[':='], 'hour', _elm_lang$core$Json_Decode$int),
-																																			function (hour) {
-																																				return A2(
-																																					_elm_lang$core$Json_Decode$andThen,
-																																					A2(_elm_lang$core$Json_Decode_ops[':='], 'day', _elm_lang$core$Json_Decode$int),
-																																					function (day) {
-																																						return A2(
-																																							_elm_lang$core$Json_Decode$andThen,
-																																							A2(_elm_lang$core$Json_Decode_ops[':='], 'calendar', _elm_lang$core$Json_Decode$string),
-																																							function (calendar) {
-																																								return _elm_lang$core$Json_Decode$succeed(
-																																									{year: year, timezone: timezone, second: second, month: month, minute: minute, millisecond: millisecond, hour: hour, day: day, calendar: calendar});
-																																							});
-																																					});
-																																			});
-																																	});
-																															});
-																													});
-																											});
-																									});
-																							})),
-																					function (online_at) {
-																						return A2(
-																							_elm_lang$core$Json_Decode$andThen,
-																							A2(_elm_lang$core$Json_Decode_ops[':='], 'nick', _elm_lang$core$Json_Decode$string),
-																							function (nick) {
-																								return _elm_lang$core$Json_Decode$succeed(
-																									{phx_ref: phx_ref, loc: loc, online_at: online_at, nick: nick});
-																							});
-																					});
-																			});
-																	}))))),
-												function ($new) {
-													return _elm_lang$core$Json_Decode$succeed(
-														{id: id, old: old, $new: $new});
-												});
-										});
-								})),
-						function (msg) {
-							return A2(
-								_elm_lang$core$Json_Decode$andThen,
-								A2(_elm_lang$core$Json_Decode_ops[':='], 'cb_data', _elm_lang$core$Json_Decode$int),
-								function (cb_data) {
-									return _elm_lang$core$Json_Decode$succeed(
-										{topic: topic, msgID: msgID, msg: msg, cb_data: cb_data});
-								});
-						});
-				});
-		}));
-var _user$project$Main$onRoomSyncLeave = _elm_lang$core$Native_Platform.incomingPort(
-	'onRoomSyncLeave',
-	A2(
-		_elm_lang$core$Json_Decode$andThen,
-		A2(_elm_lang$core$Json_Decode_ops[':='], 'topic', _elm_lang$core$Json_Decode$string),
-		function (topic) {
-			return A2(
-				_elm_lang$core$Json_Decode$andThen,
-				A2(_elm_lang$core$Json_Decode_ops[':='], 'msgID', _elm_lang$core$Json_Decode$string),
-				function (msgID) {
-					return A2(
-						_elm_lang$core$Json_Decode$andThen,
-						A2(
-							_elm_lang$core$Json_Decode_ops[':='],
-							'msg',
-							A2(
-								_elm_lang$core$Json_Decode$andThen,
-								A2(_elm_lang$core$Json_Decode_ops[':='], 'id', _elm_lang$core$Json_Decode$string),
-								function (id) {
-									return A2(
-										_elm_lang$core$Json_Decode$andThen,
-										A2(
-											_elm_lang$core$Json_Decode_ops[':='],
-											'old',
-											_elm_lang$core$Json_Decode$oneOf(
-												_elm_lang$core$Native_List.fromArray(
-													[
-														_elm_lang$core$Json_Decode$null(_elm_lang$core$Maybe$Nothing),
-														A2(
-														_elm_lang$core$Json_Decode$map,
-														_elm_lang$core$Maybe$Just,
-														A3(
-															_elm_lang$core$Json_Decode$tuple2,
-															F2(
-																function (x1, x2) {
-																	return {ctor: '_Tuple2', _0: x1, _1: x2};
-																}),
-															_elm_lang$core$Json_Decode$string,
-															_elm_lang$core$Json_Decode$list(
-																A2(
-																	_elm_lang$core$Json_Decode$andThen,
-																	A2(_elm_lang$core$Json_Decode_ops[':='], 'phx_ref', _elm_lang$core$Json_Decode$string),
-																	function (phx_ref) {
-																		return A2(
-																			_elm_lang$core$Json_Decode$andThen,
-																			A2(_elm_lang$core$Json_Decode_ops[':='], 'loc', _elm_lang$core$Json_Decode$string),
-																			function (loc) {
-																				return A2(
-																					_elm_lang$core$Json_Decode$andThen,
-																					A2(
-																						_elm_lang$core$Json_Decode_ops[':='],
-																						'online_at',
-																						A2(
-																							_elm_lang$core$Json_Decode$andThen,
-																							A2(_elm_lang$core$Json_Decode_ops[':='], 'year', _elm_lang$core$Json_Decode$int),
-																							function (year) {
-																								return A2(
-																									_elm_lang$core$Json_Decode$andThen,
-																									A2(
-																										_elm_lang$core$Json_Decode_ops[':='],
-																										'timezone',
-																										A2(
-																											_elm_lang$core$Json_Decode$andThen,
-																											A2(_elm_lang$core$Json_Decode_ops[':='], 'until', _elm_lang$core$Json_Decode$string),
-																											function (until) {
-																												return A2(
-																													_elm_lang$core$Json_Decode$andThen,
-																													A2(_elm_lang$core$Json_Decode_ops[':='], 'offset_utc', _elm_lang$core$Json_Decode$int),
-																													function (offset_utc) {
-																														return A2(
-																															_elm_lang$core$Json_Decode$andThen,
-																															A2(_elm_lang$core$Json_Decode_ops[':='], 'offset_std', _elm_lang$core$Json_Decode$int),
-																															function (offset_std) {
-																																return A2(
-																																	_elm_lang$core$Json_Decode$andThen,
-																																	A2(_elm_lang$core$Json_Decode_ops[':='], 'full_name', _elm_lang$core$Json_Decode$string),
-																																	function (full_name) {
-																																		return A2(
-																																			_elm_lang$core$Json_Decode$andThen,
-																																			A2(_elm_lang$core$Json_Decode_ops[':='], 'from', _elm_lang$core$Json_Decode$string),
-																																			function (from) {
-																																				return A2(
-																																					_elm_lang$core$Json_Decode$andThen,
-																																					A2(_elm_lang$core$Json_Decode_ops[':='], 'abbreviation', _elm_lang$core$Json_Decode$string),
-																																					function (abbreviation) {
-																																						return _elm_lang$core$Json_Decode$succeed(
-																																							{until: until, offset_utc: offset_utc, offset_std: offset_std, full_name: full_name, from: from, abbreviation: abbreviation});
-																																					});
-																																			});
-																																	});
-																															});
-																													});
-																											})),
-																									function (timezone) {
-																										return A2(
-																											_elm_lang$core$Json_Decode$andThen,
-																											A2(_elm_lang$core$Json_Decode_ops[':='], 'second', _elm_lang$core$Json_Decode$int),
-																											function (second) {
-																												return A2(
-																													_elm_lang$core$Json_Decode$andThen,
-																													A2(_elm_lang$core$Json_Decode_ops[':='], 'month', _elm_lang$core$Json_Decode$int),
-																													function (month) {
-																														return A2(
-																															_elm_lang$core$Json_Decode$andThen,
-																															A2(_elm_lang$core$Json_Decode_ops[':='], 'minute', _elm_lang$core$Json_Decode$int),
-																															function (minute) {
-																																return A2(
-																																	_elm_lang$core$Json_Decode$andThen,
-																																	A2(_elm_lang$core$Json_Decode_ops[':='], 'millisecond', _elm_lang$core$Json_Decode$int),
-																																	function (millisecond) {
-																																		return A2(
-																																			_elm_lang$core$Json_Decode$andThen,
-																																			A2(_elm_lang$core$Json_Decode_ops[':='], 'hour', _elm_lang$core$Json_Decode$int),
-																																			function (hour) {
-																																				return A2(
-																																					_elm_lang$core$Json_Decode$andThen,
-																																					A2(_elm_lang$core$Json_Decode_ops[':='], 'day', _elm_lang$core$Json_Decode$int),
-																																					function (day) {
-																																						return A2(
-																																							_elm_lang$core$Json_Decode$andThen,
-																																							A2(_elm_lang$core$Json_Decode_ops[':='], 'calendar', _elm_lang$core$Json_Decode$string),
-																																							function (calendar) {
-																																								return _elm_lang$core$Json_Decode$succeed(
-																																									{year: year, timezone: timezone, second: second, month: month, minute: minute, millisecond: millisecond, hour: hour, day: day, calendar: calendar});
-																																							});
-																																					});
-																																			});
-																																	});
-																															});
-																													});
-																											});
-																									});
-																							})),
-																					function (online_at) {
-																						return A2(
-																							_elm_lang$core$Json_Decode$andThen,
-																							A2(_elm_lang$core$Json_Decode_ops[':='], 'nick', _elm_lang$core$Json_Decode$string),
-																							function (nick) {
-																								return _elm_lang$core$Json_Decode$succeed(
-																									{phx_ref: phx_ref, loc: loc, online_at: online_at, nick: nick});
-																							});
-																					});
-																			});
-																	}))))
-													]))),
-										function (old) {
-											return A2(
-												_elm_lang$core$Json_Decode$andThen,
-												A2(
-													_elm_lang$core$Json_Decode_ops[':='],
-													'new',
-													_elm_lang$core$Json_Decode$list(
-														A3(
-															_elm_lang$core$Json_Decode$tuple2,
-															F2(
-																function (x1, x2) {
-																	return {ctor: '_Tuple2', _0: x1, _1: x2};
-																}),
-															_elm_lang$core$Json_Decode$string,
-															_elm_lang$core$Json_Decode$list(
-																A2(
-																	_elm_lang$core$Json_Decode$andThen,
-																	A2(_elm_lang$core$Json_Decode_ops[':='], 'phx_ref', _elm_lang$core$Json_Decode$string),
-																	function (phx_ref) {
-																		return A2(
-																			_elm_lang$core$Json_Decode$andThen,
-																			A2(_elm_lang$core$Json_Decode_ops[':='], 'loc', _elm_lang$core$Json_Decode$string),
-																			function (loc) {
-																				return A2(
-																					_elm_lang$core$Json_Decode$andThen,
-																					A2(
-																						_elm_lang$core$Json_Decode_ops[':='],
-																						'online_at',
-																						A2(
-																							_elm_lang$core$Json_Decode$andThen,
-																							A2(_elm_lang$core$Json_Decode_ops[':='], 'year', _elm_lang$core$Json_Decode$int),
-																							function (year) {
-																								return A2(
-																									_elm_lang$core$Json_Decode$andThen,
-																									A2(
-																										_elm_lang$core$Json_Decode_ops[':='],
-																										'timezone',
-																										A2(
-																											_elm_lang$core$Json_Decode$andThen,
-																											A2(_elm_lang$core$Json_Decode_ops[':='], 'until', _elm_lang$core$Json_Decode$string),
-																											function (until) {
-																												return A2(
-																													_elm_lang$core$Json_Decode$andThen,
-																													A2(_elm_lang$core$Json_Decode_ops[':='], 'offset_utc', _elm_lang$core$Json_Decode$int),
-																													function (offset_utc) {
-																														return A2(
-																															_elm_lang$core$Json_Decode$andThen,
-																															A2(_elm_lang$core$Json_Decode_ops[':='], 'offset_std', _elm_lang$core$Json_Decode$int),
-																															function (offset_std) {
-																																return A2(
-																																	_elm_lang$core$Json_Decode$andThen,
-																																	A2(_elm_lang$core$Json_Decode_ops[':='], 'full_name', _elm_lang$core$Json_Decode$string),
-																																	function (full_name) {
-																																		return A2(
-																																			_elm_lang$core$Json_Decode$andThen,
-																																			A2(_elm_lang$core$Json_Decode_ops[':='], 'from', _elm_lang$core$Json_Decode$string),
-																																			function (from) {
-																																				return A2(
-																																					_elm_lang$core$Json_Decode$andThen,
-																																					A2(_elm_lang$core$Json_Decode_ops[':='], 'abbreviation', _elm_lang$core$Json_Decode$string),
-																																					function (abbreviation) {
-																																						return _elm_lang$core$Json_Decode$succeed(
-																																							{until: until, offset_utc: offset_utc, offset_std: offset_std, full_name: full_name, from: from, abbreviation: abbreviation});
-																																					});
-																																			});
-																																	});
-																															});
-																													});
-																											})),
-																									function (timezone) {
-																										return A2(
-																											_elm_lang$core$Json_Decode$andThen,
-																											A2(_elm_lang$core$Json_Decode_ops[':='], 'second', _elm_lang$core$Json_Decode$int),
-																											function (second) {
-																												return A2(
-																													_elm_lang$core$Json_Decode$andThen,
-																													A2(_elm_lang$core$Json_Decode_ops[':='], 'month', _elm_lang$core$Json_Decode$int),
-																													function (month) {
-																														return A2(
-																															_elm_lang$core$Json_Decode$andThen,
-																															A2(_elm_lang$core$Json_Decode_ops[':='], 'minute', _elm_lang$core$Json_Decode$int),
-																															function (minute) {
-																																return A2(
-																																	_elm_lang$core$Json_Decode$andThen,
-																																	A2(_elm_lang$core$Json_Decode_ops[':='], 'millisecond', _elm_lang$core$Json_Decode$int),
-																																	function (millisecond) {
-																																		return A2(
-																																			_elm_lang$core$Json_Decode$andThen,
-																																			A2(_elm_lang$core$Json_Decode_ops[':='], 'hour', _elm_lang$core$Json_Decode$int),
-																																			function (hour) {
-																																				return A2(
-																																					_elm_lang$core$Json_Decode$andThen,
-																																					A2(_elm_lang$core$Json_Decode_ops[':='], 'day', _elm_lang$core$Json_Decode$int),
-																																					function (day) {
-																																						return A2(
-																																							_elm_lang$core$Json_Decode$andThen,
-																																							A2(_elm_lang$core$Json_Decode_ops[':='], 'calendar', _elm_lang$core$Json_Decode$string),
-																																							function (calendar) {
-																																								return _elm_lang$core$Json_Decode$succeed(
-																																									{year: year, timezone: timezone, second: second, month: month, minute: minute, millisecond: millisecond, hour: hour, day: day, calendar: calendar});
-																																							});
-																																					});
-																																			});
-																																	});
-																															});
-																													});
-																											});
-																									});
-																							})),
-																					function (online_at) {
-																						return A2(
-																							_elm_lang$core$Json_Decode$andThen,
-																							A2(_elm_lang$core$Json_Decode_ops[':='], 'nick', _elm_lang$core$Json_Decode$string),
-																							function (nick) {
-																								return _elm_lang$core$Json_Decode$succeed(
-																									{phx_ref: phx_ref, loc: loc, online_at: online_at, nick: nick});
-																							});
-																					});
-																			});
-																	}))))),
-												function ($new) {
-													return _elm_lang$core$Json_Decode$succeed(
-														{id: id, old: old, $new: $new});
-												});
-										});
-								})),
-						function (msg) {
-							return A2(
-								_elm_lang$core$Json_Decode$andThen,
-								A2(_elm_lang$core$Json_Decode_ops[':='], 'cb_data', _elm_lang$core$Json_Decode$int),
-								function (cb_data) {
-									return _elm_lang$core$Json_Decode$succeed(
-										{topic: topic, msgID: msgID, msg: msg, cb_data: cb_data});
-								});
-						});
-				});
-		}));
-var _user$project$Main$portSubmit = _elm_lang$core$Native_Platform.outgoingPort(
-	'portSubmit',
-	function (v) {
-		return {id: v.id, date: v.date, author: v.author, text: v.text, published: v.published};
+var _user$project$Main$connect_room = _user$project$JSPhoenix$connect(
+	{
+		topic: 'reflection',
+		timeout_ms: _elm_lang$core$Maybe$Nothing,
+		chanCloseCB: _elm_lang$core$Maybe$Nothing,
+		chanErrorCB: _elm_lang$core$Maybe$Nothing,
+		syncState: _elm_lang$core$Maybe$Nothing,
+		syncJoin: _elm_lang$core$Maybe$Nothing,
+		syncLeave: _elm_lang$core$Maybe$Nothing,
+		joinData: _elm_lang$core$Json_Encode$null,
+		joinEvents: _elm_lang$core$Native_List.fromArray(
+			[]),
+		onPorts: _elm_lang$core$Native_List.fromArray(
+			[
+				{
+				portName: 'onMsgSent',
+				msgID: 'ok',
+				cb_data: _elm_lang$core$Json_Encode$string('reflection submitted successfully')
+			}
+			])
 	});
 var _user$project$Main$update = F2(
 	function (msg, model) {
@@ -1725,6 +74,8 @@ var _user$project$Main$update = F2(
 		switch (_p0.ctor) {
 			case 'NoOp':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'ConnectClickMsg':
+				return {ctor: '_Tuple2', _0: model, _1: _user$project$Main$connect_room};
 			case 'InitRefl':
 				var _p1 = _p0._0;
 				var foo = A2(_elm_lang$core$Debug$log, 'INIT REFL', _p1);
@@ -1750,14 +101,20 @@ var _user$project$Main$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{text: _p0._0}),
+						{markdown: _p0._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
-			case 'SubmitReflection':
+			case 'SubmitClickMsg':
 				return {
 					ctor: '_Tuple2',
 					_0: model,
-					_1: _user$project$Main$portSubmit(model)
+					_1: _user$project$Main$pushRoomMsg(model)
+				};
+			case 'SubmissionReplyMsg':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$Main$pushRoomMsg(model)
 				};
 			default:
 				var _p2 = _p0._0;
@@ -1765,45 +122,42 @@ var _user$project$Main$update = F2(
 					model,
 					{published: _p2});
 				var foo = A2(_elm_lang$core$Debug$log, 'PUBLISHED', _p2);
-				return {
-					ctor: '_Tuple2',
-					_0: newModel,
-					_1: _user$project$Main$portSubmit(newModel)
-				};
+				return {ctor: '_Tuple2', _0: newModel, _1: _elm_lang$core$Platform_Cmd$none};
 		}
 	});
-var _user$project$Main$portReflection = _elm_lang$core$Native_Platform.incomingPort(
-	'portReflection',
+var _user$project$Main$initModel = {id: 0, date: '', author: '', markdown: '', published: false};
+var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$initModel, _1: _elm_lang$core$Platform_Cmd$none};
+var _user$project$Main$onMsgSent = _elm_lang$core$Native_Platform.incomingPort(
+	'onMsgSent',
 	A2(
 		_elm_lang$core$Json_Decode$andThen,
-		A2(_elm_lang$core$Json_Decode_ops[':='], 'id', _elm_lang$core$Json_Decode$int),
-		function (id) {
+		A2(_elm_lang$core$Json_Decode_ops[':='], 'topic', _elm_lang$core$Json_Decode$string),
+		function (topic) {
 			return A2(
 				_elm_lang$core$Json_Decode$andThen,
-				A2(_elm_lang$core$Json_Decode_ops[':='], 'date', _elm_lang$core$Json_Decode$string),
-				function (date) {
+				A2(_elm_lang$core$Json_Decode_ops[':='], 'msgID', _elm_lang$core$Json_Decode$string),
+				function (msgID) {
 					return A2(
 						_elm_lang$core$Json_Decode$andThen,
-						A2(_elm_lang$core$Json_Decode_ops[':='], 'author', _elm_lang$core$Json_Decode$string),
-						function (author) {
+						A2(
+							_elm_lang$core$Json_Decode_ops[':='],
+							'msg',
+							_elm_lang$core$Json_Decode$succeed(
+								{})),
+						function (msg) {
 							return A2(
 								_elm_lang$core$Json_Decode$andThen,
-								A2(_elm_lang$core$Json_Decode_ops[':='], 'text', _elm_lang$core$Json_Decode$string),
-								function (text) {
-									return A2(
-										_elm_lang$core$Json_Decode$andThen,
-										A2(_elm_lang$core$Json_Decode_ops[':='], 'published', _elm_lang$core$Json_Decode$bool),
-										function (published) {
-											return _elm_lang$core$Json_Decode$succeed(
-												{id: id, date: date, author: author, text: text, published: published});
-										});
+								A2(_elm_lang$core$Json_Decode_ops[':='], 'cb_data', _elm_lang$core$Json_Decode$string),
+								function (cb_data) {
+									return _elm_lang$core$Json_Decode$succeed(
+										{topic: topic, msgID: msgID, msg: msg, cb_data: cb_data});
 								});
 						});
 				});
 		}));
 var _user$project$Main$Model = F5(
 	function (a, b, c, d, e) {
-		return {id: a, date: b, author: c, text: d, published: e};
+		return {id: a, date: b, author: c, markdown: d, published: e};
 	});
 var _user$project$Main$RoomSyncMeta = F4(
 	function (a, b, c, d) {
@@ -1813,17 +167,25 @@ var _user$project$Main$RoomSyncEvent = F3(
 	function (a, b, c) {
 		return {id: a, old: b, $new: c};
 	});
-var _user$project$Main$RoomMessage = F7(
-	function (a, b, c, d, e, f, g) {
-		return {date: a, markdown: b, author: c, read_cnt: d, published: e, inserted_at: f, updated_at: g};
+var _user$project$Main$RoomMessage = F5(
+	function (a, b, c, d, e) {
+		return {id: a, date: b, markdown: c, author: d, published: e};
 	});
 var _user$project$Main$RoomMessages = function (a) {
 	return {msgs: a};
 };
-var _user$project$Main$ModelFormatted = F4(
-	function (a, b, c, d) {
-		return {cb_data: a, msg: b, msgID: c, topic: d};
-	});
+var _user$project$Main$ConnectClickMsg = {ctor: 'ConnectClickMsg'};
+var _user$project$Main$SubmissionReplyMsg = function (a) {
+	return {ctor: 'SubmissionReplyMsg', _0: a};
+};
+var _user$project$Main$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$batch(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$Main$onMsgSent(_user$project$Main$SubmissionReplyMsg)
+			]));
+};
+var _user$project$Main$SubmitClickMsg = {ctor: 'SubmitClickMsg'};
 var _user$project$Main$Published = function (a) {
 	return {ctor: 'Published', _0: a};
 };
@@ -1896,7 +258,7 @@ var _user$project$Main$showText = function (model) {
 						_evancz$elm_markdown$Markdown$toHtml,
 						_elm_lang$core$Native_List.fromArray(
 							[]),
-						model.text)
+						model.markdown)
 					]))
 			]));
 };
@@ -1919,7 +281,7 @@ var _user$project$Main$inputText = function (model) {
 						_elm_lang$html$Html_Attributes$id('reflection-text'),
 						_elm_lang$html$Html_Attributes$name('reflection-text'),
 						_elm_lang$html$Html_Attributes$placeholder('Use Markdown formatting'),
-						_elm_lang$html$Html_Attributes$value(model.text),
+						_elm_lang$html$Html_Attributes$value(model.markdown),
 						_elm_lang$html$Html_Events$onInput(_user$project$Main$ReflectionText),
 						_elm_lang$html$Html_Attributes$autofocus(true)
 					]),
@@ -1979,17 +341,6 @@ var _user$project$Main$inputDate = function (model) {
 					[]))
 			]));
 };
-var _user$project$Main$InitRefl = function (a) {
-	return {ctor: 'InitRefl', _0: a};
-};
-var _user$project$Main$subscriptions = function (model) {
-	return _elm_lang$core$Platform_Sub$batch(
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_user$project$Main$portReflection(_user$project$Main$InitRefl)
-			]));
-};
-var _user$project$Main$SubmitReflection = {ctor: 'SubmitReflection'};
 var _user$project$Main$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -2020,11 +371,28 @@ var _user$project$Main$view = function (model) {
 								_elm_lang$html$Html$button,
 								_elm_lang$core$Native_List.fromArray(
 									[
-										_elm_lang$html$Html_Events$onClick(_user$project$Main$SubmitReflection)
+										_elm_lang$html$Html_Events$onClick(_user$project$Main$SubmitClickMsg)
 									]),
 								_elm_lang$core$Native_List.fromArray(
 									[
 										_elm_lang$html$Html$text('Submit')
+									]))
+							])),
+						A2(
+						_elm_lang$html$Html$li,
+						_elm_lang$core$Native_List.fromArray(
+							[]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								A2(
+								_elm_lang$html$Html$button,
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html_Events$onClick(_user$project$Main$ConnectClickMsg)
+									]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html$text('Connect')
 									]))
 							]))
 					])),
@@ -2034,5 +402,8 @@ var _user$project$Main$view = function (model) {
 var _user$project$Main$main = {
 	main: _elm_lang$html$Html_App$program(
 		{init: _user$project$Main$init, update: _user$project$Main$update, view: _user$project$Main$view, subscriptions: _user$project$Main$subscriptions})
+};
+var _user$project$Main$InitRefl = function (a) {
+	return {ctor: 'InitRefl', _0: a};
 };
 var _user$project$Main$NoOp = {ctor: 'NoOp'};

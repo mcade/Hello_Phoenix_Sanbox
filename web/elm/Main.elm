@@ -5,17 +5,17 @@ import Html.Events exposing (..)
 import JSPhoenix exposing (ChannelEventMsg, ChanExitCB)
 import Markdown exposing (..)
 import Json.Decode as JD exposing (int, string, bool)
-import Json.Encode as JE exposing (int, null)
+import Json.Encode as JE exposing (int, null, object)
 import Html.App as Html
 import Html exposing (..)
 
--- MODEL
+-- MODEL 
 
 type alias Model =
   { id:         Int
   , date:       String
   , author:     String
-  , text:       String
+  , markdown:   String
   , published:  Bool
   }
 
@@ -24,7 +24,7 @@ initModel =
   { id        = 0
   , date      = ""
   , author    = ""
-  , text      = ""
+  , markdown  = ""
   , published = False
   }
 
@@ -49,71 +49,99 @@ type alias RoomSyncEvent =
 
 -- Custom messages, whatever fits your Phoenix app:
 type alias RoomMessage =
-  { date : String
+  { id : Int 
+  , date : String
   , markdown : String
   , author : String
-  , read_cnt : Int
+  --, read_cnt : Int
   , published : Bool
-  , inserted_at : JSPhoenix.TimexDateTime
-  , updated_at : JSPhoenix.TimexDateTime
   }
+
 
 type alias RoomMessages =
   { msgs : List RoomMessage }
 
-port onRoomConnect : (ChannelEventMsg RoomMessages RoomMessage -> msg) -> Sub msg
-port onRoomInfo : (ChannelEventMsg {} Int -> msg) -> Sub msg
-port onRoomMsgsInit : (ChannelEventMsg RoomMessages Int -> msg) -> Sub msg
-port onRoomMsgsAdd : (ChannelEventMsg RoomMessages Int -> msg) -> Sub msg
-port onRoomSyncState : (ChannelEventMsg RoomSyncState Int -> msg) -> Sub msg
-port onRoomSyncJoin : (ChannelEventMsg RoomSyncEvent Int -> msg) -> Sub msg
-port onRoomSyncLeave : (ChannelEventMsg RoomSyncEvent Int -> msg) -> Sub msg
-
-port portSubmit: Model -> Cmd msg
-port portReflection: (Model -> msg) -> Sub msg
+--port onRoomConnect : (ChannelEventMsg {} String -> msg) -> Sub msg
+port onMsgSent : (ChannelEventMsg {} String -> msg) -> Sub msg
 
 
-connect_room rid =
+connect_room =
   JSPhoenix.connect
       { topic = "reflection"
       , timeout_ms = Nothing -- Just 10000 -- Default value is 10000 if Nothing is used
       , chanCloseCB = Nothing
       , chanErrorCB = Nothing
-      , syncState = Just { portName = "onRoomSyncState", cb_data = (JE.int rid) }
-      , syncJoin = Just { portName = "onRoomSyncJoin", cb_data = (JE.int rid) }
-      , syncLeave = Just { portName = "onRoomSyncLeave", cb_data = (JE.int rid) }
+      , syncState = Nothing
+      , syncJoin = Nothing
+      , syncLeave = Nothing
       , joinData = null
       , joinEvents =
-          [ { portName = "onRoomConnect", msgID = "ok", cb_data = (JE.int rid) }
-          ]
+          []
       , onPorts =
-          [ { portName = "onRoomInfo", msgID = "room:info", cb_data = (JE.int rid) }
-          , { portName = "onRoomMsgsInit", msgID = "msgs:init", cb_data = (JE.int rid) }
-          , { portName = "onRoomMsgsAdd", msgID = "msgs:add", cb_data = (JE.int rid) }
+          [ { portName = "onMsgSent", msgID = "ok", cb_data = (JE.string "reflection submitted successfully") }
           ]
       }
+ 
 
-type alias ModelFormatted = 
-    { cb_data : Model
-    , msg : RoomMessage
-    , msgID : String
-    , topic : String
+pushRoomMsg : Model -> Cmd Msg
+pushRoomMsg model =
+  let
+    msg_send_push : JSPhoenix.Push
+    msg_send_push =
+    { topic = "reflection"
+    , mid = "submit"
+    , msg = JE.object [ ( "date", JE.string model.date )
+                      , ( "markdown", JE.string model.markdown )
+                      , ( "author", JE.string model.author )
+                      , ( "published", JE.bool model.published )
+                      ]
+    , pushEvents =
+        [ { portName = "onMsgSent"
+          , msgID = "ok"
+          , cb_data = JE.string "ok"
+          }
+        , { portName = "onMsgError"
+          , msgID = "error"
+          , cb_data = JE.string "error"
+          }
+        , { portName = "onMsgTimeout"
+          , msgID = "timeout"
+          , cb_data = JE.string "timeout"
+          }
+        ]
     }
+  in
+    JSPhoenix.push msg_send_push
 
+    
 type Msg
     = NoOp
-    | SubmitReflection
+    --| SubmitReflection
     | InitRefl Model
     | ReflectionDate String
     | ReflectionAuthor String
     | ReflectionText String
     | Published Bool
-
+    -- | MyRoomConnectMsg (ChannelEventMsg {} String)
+    -- | MyRoomMsgsSubmitMsg (ChannelEventMsg RoomMessage String)
+    | SubmitClickMsg
+    | SubmissionReplyMsg (ChannelEventMsg {} String)
+    | ConnectClickMsg
+ 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
     NoOp -> (model, Cmd.none)
     
+    -- MyRoomConnectMsg msg ->
+    --   ( model
+    --   , connect_room -- You can use the JSPhoenix.connect like any normal command
+    --   )
+    ConnectClickMsg ->
+        ( model
+        , connect_room
+        )
+      
     InitRefl newModel -> 
         let
           foo = Debug.log "INIT REFL" newModel
@@ -126,39 +154,35 @@ update msg model =
       ( { model | author = s }, Cmd.none)
 
     ReflectionText s ->
-      ( { model | text = s }, Cmd.none)
+      ( { model | markdown = s }, Cmd.none)
       
-    SubmitReflection ->
-        ( model, portSubmit model )
+    -- MyRoomMsgsSubmitMsg msg ->
+    --     ( model, pushRoomMsg model )
+
+    SubmitClickMsg ->
+        ( model, pushRoomMsg model )
+    
+    SubmissionReplyMsg msg ->
+        ( model , pushRoomMsg model)
         
     Published bool ->
       let
         foo = Debug.log "PUBLISHED" bool
         newModel = { model | published = bool }
       in
-        ( newModel, portSubmit newModel)
---     MyConnectMessage rid ->
---       ( model
---       , connect_room rid -- You can use the JSPhoenix.connect like any normal command
---       )
+        ( newModel, Cmd.none)
 
--- subscriptions : Model -> Sub Msg
--- subscriptions model =
---   Sub.batch -- Subscribe to your port events to get their messages
---     [ onRoomConnect (\{ msg, cb_data } -> MyRoomConnectMsg msg cb_data) -- Example to show you the structure of the data
---     , onRoomConnect (\{ msg } -> MyRoomConnectMsg msg)
---     , onRoomInfo MyRoomInfoMsg
---     , onRoomMsgsInit MyRoomMsgsInitMsg
---     , onRoomMsgsAdd MyRoomMsgsAddMsg
---     , onRoomSyncState MyRoomSyncStateMsg
---     , onRoomSyncJoin MyRoomSyncJoinMsg
---     , onRoomSyncLeave MyRoomSyncLeaveMsg
---     ]
-
-subscriptions: Model -> Sub Msg
+subscriptions : Model -> Sub Msg
 subscriptions model =
-  Sub.batch
-  [ portReflection InitRefl]
+  Sub.batch -- Subscribe to your port events to get their messages
+    [ onMsgSent SubmissionReplyMsg
+    --onRoomConnect MyRoomConnectMsg
+    ]
+
+-- subscriptions: Model -> Sub Msg
+-- subscriptions model =
+--   Sub.batch
+--   [ portReflection InitRefl]
 
 main = Html.program
   { init = init
@@ -179,7 +203,8 @@ view model =
   , inputAuthor model
   , inputText model
   , ul [id "refl-buttons"]
-      [ li [] [ button [ onClick SubmitReflection ] [ text "Submit" ] ] 
+      [ li [] [ button [ onClick SubmitClickMsg ] [ text "Submit" ] ]
+      , li [] [ button [ onClick ConnectClickMsg ] [ text "Connect" ] ]
       ]
   , showText model
   ]
@@ -221,7 +246,7 @@ inputText model =
         [ id "reflection-text"
         , name "reflection-text"
         , placeholder "Use Markdown formatting"
-        , Html.Attributes.value model.text
+        , Html.Attributes.value model.markdown
         , onInput ReflectionText
         , autofocus True
         ]
@@ -241,5 +266,5 @@ showText model =
             []
     , span [ style [("font-weight", "normal"), ("font-size", "0.7em")] ] [ text ")" ]
     ]
-  , div [id "md-text"] [Markdown.toHtml [] model.text]
+  , div [id "md-text"] [Markdown.toHtml [] model.markdown]
   ]

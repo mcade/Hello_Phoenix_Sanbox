@@ -63,7 +63,8 @@ type alias RoomMessages =
 
 --port onRoomConnect : (ChannelEventMsg {} String -> msg) -> Sub msg
 port onMsgSent : (ChannelEventMsg {} String -> msg) -> Sub msg
-
+port onMsgReceived : (ChannelEventMsg {} String -> msg) -> Sub msg
+-- { :reply, :ok, socket }
 
 connect_room =
   JSPhoenix.connect
@@ -163,7 +164,10 @@ update msg model =
         ( model, pushRoomMsg model )
     
     SubmissionReplyMsg msg ->
-        ( model , pushRoomMsg model)
+    let
+      _ = Debug.log "msg" msg
+    in
+        ( model , Cmd.none ) --pushRoomMsg model)
         
     Published bool ->
       let

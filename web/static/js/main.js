@@ -10531,17 +10531,14 @@ var _user$project$Main$update = F2(
 					_1: _user$project$Main$pushRoomMsg(model)
 				};
 			case 'SubmissionReplyMsg':
-				return {
-					ctor: '_Tuple2',
-					_0: model,
-					_1: _user$project$Main$pushRoomMsg(model)
-				};
+				var _p2 = A2(_elm_lang$core$Debug$log, 'msg', _p0._0);
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			default:
-				var _p2 = _p0._0;
+				var _p3 = _p0._0;
 				var newModel = _elm_lang$core$Native_Utils.update(
 					model,
-					{published: _p2});
-				var foo = A2(_elm_lang$core$Debug$log, 'PUBLISHED', _p2);
+					{published: _p3});
+				var foo = A2(_elm_lang$core$Debug$log, 'PUBLISHED', _p3);
 				return {ctor: '_Tuple2', _0: newModel, _1: _elm_lang$core$Platform_Cmd$none};
 		}
 	});
@@ -10549,6 +10546,34 @@ var _user$project$Main$initModel = {id: 0, date: '', author: '', markdown: '', p
 var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$initModel, _1: _elm_lang$core$Platform_Cmd$none};
 var _user$project$Main$onMsgSent = _elm_lang$core$Native_Platform.incomingPort(
 	'onMsgSent',
+	A2(
+		_elm_lang$core$Json_Decode$andThen,
+		A2(_elm_lang$core$Json_Decode_ops[':='], 'topic', _elm_lang$core$Json_Decode$string),
+		function (topic) {
+			return A2(
+				_elm_lang$core$Json_Decode$andThen,
+				A2(_elm_lang$core$Json_Decode_ops[':='], 'msgID', _elm_lang$core$Json_Decode$string),
+				function (msgID) {
+					return A2(
+						_elm_lang$core$Json_Decode$andThen,
+						A2(
+							_elm_lang$core$Json_Decode_ops[':='],
+							'msg',
+							_elm_lang$core$Json_Decode$succeed(
+								{})),
+						function (msg) {
+							return A2(
+								_elm_lang$core$Json_Decode$andThen,
+								A2(_elm_lang$core$Json_Decode_ops[':='], 'cb_data', _elm_lang$core$Json_Decode$string),
+								function (cb_data) {
+									return _elm_lang$core$Json_Decode$succeed(
+										{topic: topic, msgID: msgID, msg: msg, cb_data: cb_data});
+								});
+						});
+				});
+		}));
+var _user$project$Main$onMsgReceived = _elm_lang$core$Native_Platform.incomingPort(
+	'onMsgReceived',
 	A2(
 		_elm_lang$core$Json_Decode$andThen,
 		A2(_elm_lang$core$Json_Decode_ops[':='], 'topic', _elm_lang$core$Json_Decode$string),

@@ -42,6 +42,15 @@ var _user$project$Main$pushRoomMsg = function (model) {
 				portName: 'onMsgTimeout',
 				msgID: 'timeout',
 				cb_data: _elm_lang$core$Json_Encode$string('timeout')
+			},
+				{
+				portName: 'onMsgSent',
+				msgID: 'reply',
+				cb_data: _elm_lang$core$Json_Encode$string(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'This is a reply from ',
+						A2(_elm_lang$core$Basics_ops['++'], model.author, '\'s submission!')))
 			}
 			])
 	};
@@ -60,13 +69,7 @@ var _user$project$Main$connect_room = _user$project$JSPhoenix$connect(
 		joinEvents: _elm_lang$core$Native_List.fromArray(
 			[]),
 		onPorts: _elm_lang$core$Native_List.fromArray(
-			[
-				{
-				portName: 'onMsgSent',
-				msgID: 'ok',
-				cb_data: _elm_lang$core$Json_Encode$string('reflection submitted successfully')
-			}
-			])
+			[])
 	});
 var _user$project$Main$update = F2(
 	function (msg, model) {

@@ -79,7 +79,7 @@ connect_room =
       , joinEvents =
           []
       , onPorts =
-          [ { portName = "onMsgSent", msgID = "ok", cb_data = (JE.string "reflection submitted successfully") }
+          [ --{ portName = "onMsgSent", msgID = "reply", cb_data = (JE.string "reflection submitted successfully") }
           ]
       }
  
@@ -108,6 +108,10 @@ pushRoomMsg model =
         , { portName = "onMsgTimeout"
           , msgID = "timeout"
           , cb_data = JE.string "timeout"
+          }
+        , { portName = "onMsgSent"
+          , msgID = "reply"
+          , cb_data = JE.string ("This is a reply from " ++ model.author ++ "'s submission!")
           }
         ]
     }

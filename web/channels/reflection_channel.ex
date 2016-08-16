@@ -39,9 +39,10 @@ defmodule HelloPhoenix.ReflectionChannel do
 
     case Repo.insert( %Reflection{date: reflection["date"], markdown: reflection["markdown"], author: reflection["author"], published: reflection["published"]}) do
       {:ok, reflection} ->
-        { :reply, :ok, socket }
-        #{ :reply, %{resp: "ok"}, socket}
-        #{:reply, :ok, socket}
+        { :reply, {:reply, %{resp: "yadda yadda"}}, socket }
+        # proper example -> {:reply, {:ok, %{kind: "private", from: "server", body: user_list}}, socket}
+        # needs to return a response formatted like this: {:reply, {status :: atom, response :: map}, Socket.t}
+        
         #push socket, "submitted", %{resp: "ok"}
       #{:error, changeset} ->
         #{:reply, :error, socket}

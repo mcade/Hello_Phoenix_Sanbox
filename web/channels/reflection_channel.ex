@@ -3,6 +3,8 @@ require Poison
 require Ecto.Query
 alias HelloPhoenix.Repo
 alias HelloPhoenix.Reflection
+alias HelloPhoenix.User
+alias HelloPhoenix.Mailer
 
 defmodule HelloPhoenix.ReflectionChannel do
   use HelloPhoenix.Web, :channel
@@ -19,6 +21,9 @@ defmodule HelloPhoenix.ReflectionChannel do
   def handle_info(:after_join, socket) do
     {:noreply, socket}
   end
+  # def handle_info(_, socket) do
+  #   {:noreply, socket}
+  # end
 
 #   def handle_in("reset", id, socket) do
 #     {id, date, author, markdown, published} = 
@@ -28,6 +33,74 @@ defmodule HelloPhoenix.ReflectionChannel do
 #       push socket, "reflection", %{id: id, date: date, author: author, text: markdown, published: published}
 #     {:noreply, socket}
 #   end
+  # %Reflection{date: reflection["date"], markdown: reflection["markdown"]
+  def handle_in("login", user_params, socket) do
+    user_email = String.downcase(user_params["email"])
+    user_struct =
+      case Repo.get_by(User, email: user_email) do
+        nil -> %User{email: user_email}
+        user -> user
+      end
+      |> User.registration_changeset(user_params)
+      
+    case Repo.insert_or_update(user_struct) do
+      {:ok, user} ->
+        Task.async(fn -> Mailer.send_login_token(user) end)
+        #{:reply, {:ok, user}, socket}
+        {:noreply, socket}
+        # conn
+        # |> put_flash(:info, "We sent you a link to create an account. Please check your inbox.")
+        # |> redirect(to: page_path(conn, :index))
+        
+      {:error, changeset} ->
+        {:reply, :error, socket}
+      # {:ok, _} ->
+      #   conn
+      #   |> put_flash(:info, "We sent you a link to create an account. Please check your inbox.")
+      #   |> redirect(to: page_path(conn, :index))
+      # {:error, changeset} ->
+      #   render(conn, "new.html", changeset: changeset)
+    end
+  end
+  
+  def handle_in("logout", _params, socket) do
+  end
+  # def delete(conn, _params) do
+  #   conn
+  #   |> PasswordlessLoginApp.SimpleAuth.logout()
+  #   |> put_flash(:info, "User logged out.")
+  #   |> redirect(to: page_path(conn, :index))
+  # end
+  
+  # def create(conn, %{"user" => user_params}) do
+  #   user_email = String.downcase(user_params["email"])
+  #   user_struct =
+  #     case Repo.get_by(User, email: user_email) do
+  #       nil -> %User{email: user_email}
+  #       user -> user
+  #     end
+  #     |> User.registration_changeset(user_params)
+  
+  #   case Repo.insert_or_update(user_struct) do
+  #     {:ok, changeset} ->
+  #       {:reply, {:ok, changeset}, socket}
+  #       # conn
+  #       # |> put_flash(:info, "We sent you a link to create an account. Please check your inbox.")
+  #       # |> redirect(to: page_path(conn, :index))
+  #     {:error, changeset} ->
+  #       {:reply, :error, socket}
+  #       #render(conn, "new.html", changeset: changeset)
+    
+  #       if changeset.valid? do
+  #         Repo.insert!(changeset)
+  #         {:reply, {:ok, changeset}, socket}
+  #       else
+  #         {:reply,{:error, MyApp.ChangesetView.render("errors.json",
+  #           %{changeset: changeset}), socket}
+  #       end
+  #   end
+  # end
+  
 
   def handle_in("submit", reflection, socket) do
     # refl = Repo.insert!(Reflection, id)

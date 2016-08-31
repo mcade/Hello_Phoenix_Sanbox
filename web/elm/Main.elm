@@ -17,6 +17,7 @@ type alias Model =
   , author:     String
   , markdown:   String
   , published:  Bool
+  , email:      String
   }
 
 initModel: Model
@@ -26,6 +27,7 @@ initModel =
   , author    = ""
   , markdown  = ""
   , published = False
+  , email = ""
   }
 
 init: (Model, Cmd Msg)
@@ -55,6 +57,7 @@ type alias RoomMessage =
   , author : String
   --, read_cnt : Int
   , published : Bool
+  , email : String
   }
 
 
@@ -83,6 +86,35 @@ connect_room =
           ]
       }
  
+pushRoomLoginMsg : Model -> Cmd Msg
+pushRoomLoginMsg model =
+  let
+    msg_send_push : JSPhoenix.Push
+    msg_send_push =
+    { topic = "reflection"
+    , mid = "login"
+    , msg = JE.object [ ( "email", JE.string model.email ) ]
+    , pushEvents =
+        [ { portName = "onMsgSent"
+          , msgID = "ok"
+          , cb_data = JE.string "ok"
+          }
+        , { portName = "onMsgError"
+          , msgID = "error"
+          , cb_data = JE.string "error"
+          }
+        , { portName = "onMsgTimeout"
+          , msgID = "timeout"
+          , cb_data = JE.string "timeout"
+          }
+        , { portName = "onMsgSent"
+          , msgID = "reply"
+          , cb_data = JE.string ("This is a reply from " ++ model.author ++ "'s submission!")
+          }
+        ]
+    }
+  in
+    JSPhoenix.push msg_send_push
 
 pushRoomMsg : Model -> Cmd Msg
 pushRoomMsg model =
@@ -126,12 +158,14 @@ type Msg
     | ReflectionDate String
     | ReflectionAuthor String
     | ReflectionText String
+    | ReflectionEmail String
     | Published Bool
     -- | MyRoomConnectMsg (ChannelEventMsg {} String)
     -- | MyRoomMsgsSubmitMsg (ChannelEventMsg RoomMessage String)
     | SubmitClickMsg
     | SubmissionReplyMsg (ChannelEventMsg {} String)
     | ConnectClickMsg
+    | LoginMsg
  
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -152,18 +186,22 @@ update msg model =
           foo = Debug.log "INIT REFL" newModel
         in
           ( newModel , Cmd.none)
+    ReflectionEmail s ->
+      ( { model | email = s }, Cmd.none )
+      
     ReflectionDate s ->
-      ( { model | date = s }, Cmd.none)
+      ( { model | date = s }, Cmd.none )
 
     ReflectionAuthor s -> 
-      ( { model | author = s }, Cmd.none)
+      ( { model | author = s }, Cmd.none )
 
     ReflectionText s ->
-      ( { model | markdown = s }, Cmd.none)
+      ( { model | markdown = s }, Cmd.none )
       
     -- MyRoomMsgsSubmitMsg msg ->
     --     ( model, pushRoomMsg model )
-
+    LoginMsg ->
+        (model, pushRoomLoginMsg model )
     SubmitClickMsg ->
         ( model, pushRoomMsg model )
     
@@ -207,16 +245,33 @@ main = Html.program
 view : Model -> Html Msg
 view model =
   div [ id "refl-edit"]
-  [ inputDate model
+  [ inputEmail model
+  , inputDate model
   , inputAuthor model
   , inputText model
   , ul [id "refl-buttons"]
       [ li [] [ button [ onClick SubmitClickMsg ] [ text "Submit" ] ]
       , li [] [ button [ onClick ConnectClickMsg ] [ text "Connect" ] ]
+      , li [] [ button [ onClick LoginMsg ] [ text "Login" ] ]
       ]
   , showText model
   ]
 
+inputEmail: Model -> Html Msg
+inputEmail model =
+  p [] 
+    [ input
+        [ id "reflection-email"
+        , name "reflection-email"
+        , type' "text"
+        , placeholder "Reflection Email"
+        , Html.Attributes.value model.email
+        , onInput ReflectionEmail
+        , autofocus True
+        ] 
+        []
+    ]
+    
 inputDate: Model -> Html Msg
 inputDate model =
   p [] 

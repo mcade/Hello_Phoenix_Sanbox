@@ -56,6 +56,49 @@ var _user$project$Main$pushRoomMsg = function (model) {
 	};
 	return _user$project$JSPhoenix$push(msg_send_push);
 };
+var _user$project$Main$pushRoomLoginMsg = function (model) {
+	var msg_send_push = {
+		topic: 'reflection',
+		mid: 'login',
+		msg: _elm_lang$core$Json_Encode$object(
+			_elm_lang$core$Native_List.fromArray(
+				[
+					{
+					ctor: '_Tuple2',
+					_0: 'email',
+					_1: _elm_lang$core$Json_Encode$string(model.email)
+				}
+				])),
+		pushEvents: _elm_lang$core$Native_List.fromArray(
+			[
+				{
+				portName: 'onMsgSent',
+				msgID: 'ok',
+				cb_data: _elm_lang$core$Json_Encode$string('ok')
+			},
+				{
+				portName: 'onMsgError',
+				msgID: 'error',
+				cb_data: _elm_lang$core$Json_Encode$string('error')
+			},
+				{
+				portName: 'onMsgTimeout',
+				msgID: 'timeout',
+				cb_data: _elm_lang$core$Json_Encode$string('timeout')
+			},
+				{
+				portName: 'onMsgSent',
+				msgID: 'reply',
+				cb_data: _elm_lang$core$Json_Encode$string(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'This is a reply from ',
+						A2(_elm_lang$core$Basics_ops['++'], model.author, '\'s submission!')))
+			}
+			])
+	};
+	return _user$project$JSPhoenix$push(msg_send_push);
+};
 var _user$project$Main$connect_room = _user$project$JSPhoenix$connect(
 	{
 		topic: 'reflection',
@@ -83,6 +126,14 @@ var _user$project$Main$update = F2(
 				var _p1 = _p0._0;
 				var foo = A2(_elm_lang$core$Debug$log, 'INIT REFL', _p1);
 				return {ctor: '_Tuple2', _0: _p1, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'ReflectionEmail':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{email: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			case 'ReflectionDate':
 				return {
 					ctor: '_Tuple2',
@@ -107,6 +158,12 @@ var _user$project$Main$update = F2(
 						{markdown: _p0._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
+			case 'LoginMsg':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$Main$pushRoomLoginMsg(model)
+				};
 			case 'SubmitClickMsg':
 				return {
 					ctor: '_Tuple2',
@@ -125,7 +182,7 @@ var _user$project$Main$update = F2(
 				return {ctor: '_Tuple2', _0: newModel, _1: _elm_lang$core$Platform_Cmd$none};
 		}
 	});
-var _user$project$Main$initModel = {id: 0, date: '', author: '', markdown: '', published: false};
+var _user$project$Main$initModel = {id: 0, date: '', author: '', markdown: '', published: false, email: ''};
 var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$initModel, _1: _elm_lang$core$Platform_Cmd$none};
 var _user$project$Main$onMsgSent = _elm_lang$core$Native_Platform.incomingPort(
 	'onMsgSent',
@@ -183,9 +240,9 @@ var _user$project$Main$onMsgReceived = _elm_lang$core$Native_Platform.incomingPo
 						});
 				});
 		}));
-var _user$project$Main$Model = F5(
-	function (a, b, c, d, e) {
-		return {id: a, date: b, author: c, markdown: d, published: e};
+var _user$project$Main$Model = F6(
+	function (a, b, c, d, e, f) {
+		return {id: a, date: b, author: c, markdown: d, published: e, email: f};
 	});
 var _user$project$Main$RoomSyncMeta = F4(
 	function (a, b, c, d) {
@@ -195,13 +252,14 @@ var _user$project$Main$RoomSyncEvent = F3(
 	function (a, b, c) {
 		return {id: a, old: b, $new: c};
 	});
-var _user$project$Main$RoomMessage = F5(
-	function (a, b, c, d, e) {
-		return {id: a, date: b, markdown: c, author: d, published: e};
+var _user$project$Main$RoomMessage = F6(
+	function (a, b, c, d, e, f) {
+		return {id: a, date: b, markdown: c, author: d, published: e, email: f};
 	});
 var _user$project$Main$RoomMessages = function (a) {
 	return {msgs: a};
 };
+var _user$project$Main$LoginMsg = {ctor: 'LoginMsg'};
 var _user$project$Main$ConnectClickMsg = {ctor: 'ConnectClickMsg'};
 var _user$project$Main$SubmissionReplyMsg = function (a) {
 	return {ctor: 'SubmissionReplyMsg', _0: a};
@@ -288,6 +346,32 @@ var _user$project$Main$showText = function (model) {
 							[]),
 						model.markdown)
 					]))
+			]));
+};
+var _user$project$Main$ReflectionEmail = function (a) {
+	return {ctor: 'ReflectionEmail', _0: a};
+};
+var _user$project$Main$inputEmail = function (model) {
+	return A2(
+		_elm_lang$html$Html$p,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$input,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$id('reflection-email'),
+						_elm_lang$html$Html_Attributes$name('reflection-email'),
+						_elm_lang$html$Html_Attributes$type$('text'),
+						_elm_lang$html$Html_Attributes$placeholder('Reflection Email'),
+						_elm_lang$html$Html_Attributes$value(model.email),
+						_elm_lang$html$Html_Events$onInput(_user$project$Main$ReflectionEmail),
+						_elm_lang$html$Html_Attributes$autofocus(true)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[]))
 			]));
 };
 var _user$project$Main$ReflectionText = function (a) {
@@ -378,6 +462,7 @@ var _user$project$Main$view = function (model) {
 			]),
 		_elm_lang$core$Native_List.fromArray(
 			[
+				_user$project$Main$inputEmail(model),
 				_user$project$Main$inputDate(model),
 				_user$project$Main$inputAuthor(model),
 				_user$project$Main$inputText(model),
@@ -421,6 +506,23 @@ var _user$project$Main$view = function (model) {
 								_elm_lang$core$Native_List.fromArray(
 									[
 										_elm_lang$html$Html$text('Connect')
+									]))
+							])),
+						A2(
+						_elm_lang$html$Html$li,
+						_elm_lang$core$Native_List.fromArray(
+							[]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								A2(
+								_elm_lang$html$Html$button,
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html_Events$onClick(_user$project$Main$LoginMsg)
+									]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html$text('Login')
 									]))
 							]))
 					])),

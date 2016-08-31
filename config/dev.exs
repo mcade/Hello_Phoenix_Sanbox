@@ -42,3 +42,6 @@ config :hello_phoenix, HelloPhoenix.Repo,
   hostname: "localhost",
   template: "template0",
   pool_size: 10
+
+
+import_config "dev.secret.exs"

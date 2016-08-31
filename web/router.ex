@@ -14,10 +14,12 @@ defmodule HelloPhoenix.Router do
   end
 
   scope "/", HelloPhoenix do
-    pipe_through :browser # Use the default browser stack
+    pipe_through [:browser, HelloPhoenix.SimpleAuth]
 
     get "/", PageController, :index
     resources "/reflections", ReflectionController
+    resources "/session", SessionController, only: [:show]
+    resources "/session", SessionController, only: [:delete], singleton: true
   end
 
   # Other scopes may use custom stacks.

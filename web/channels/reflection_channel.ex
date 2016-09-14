@@ -19,8 +19,28 @@ defmodule HelloPhoenix.ReflectionChannel do
   end
 
   def handle_info(:after_join, socket) do
+   {:noreply, socket}
+  end
+
+  def handle_info({ref, {:ok, result}}, socket) do
+    #reply ref, {:ok, result}
+    #push socket, result
     {:noreply, socket}
   end
+  
+  # def handle_info({:DOWN, ref, :process, pid, :normal}, socket) do
+  #   {:noreply, socket}
+  # end
+  
+  def handle_info(unknown_messages, socket) do
+    IO.inspect socket
+    IO.inspect unknown_messages
+    {:noreply, socket}
+  end
+  # {#Reference<0.0.6.987>,
+  # {:ok, "{\n  \"id\": \"<20160904030916.8248.64073.6c5c5.mailgun.org>\",\n  \"message\": \"Queued. Thank you.\"\n}"}
+    
+  # },
   # def handle_info(_, socket) do
   #   {:noreply, socket}
   # end

@@ -1,3 +1,60 @@
+var _user$project$Main$showAnimation = A2(
+	_elm_lang$svg$Svg$svg,
+	_elm_lang$core$Native_List.fromArray(
+		[
+			_elm_lang$svg$Svg_Attributes$width('100%'),
+			_elm_lang$svg$Svg_Attributes$height('100%'),
+			_elm_lang$svg$Svg_Attributes$viewBox('0 0 320 180'),
+			_elm_lang$svg$Svg_Attributes$class('letters letters--effect-1')
+		]),
+	_elm_lang$core$Native_List.fromArray(
+		[
+			A2(
+			_elm_lang$svg$Svg$g,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$svg$Svg_Attributes$class('letter letter--1')
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(
+					_elm_lang$svg$Svg$g,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$svg$Svg_Attributes$class('letter__part')
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							A2(
+							_elm_lang$svg$Svg$path,
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$svg$Svg_Attributes$d('M25,39.7l22.4,51l7.9-32.2L76.2,84l1.3-61.2'),
+									_elm_lang$svg$Svg_Attributes$class('letter__layer color-6')
+								]),
+							_elm_lang$core$Native_List.fromArray(
+								[])),
+							A2(
+							_elm_lang$svg$Svg$path,
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$svg$Svg_Attributes$d('M25,39.7l22.4,51l7.9-32.2L76.2,84l1.3-61.2'),
+									_elm_lang$svg$Svg_Attributes$class('letter__layer color-1')
+								]),
+							_elm_lang$core$Native_List.fromArray(
+								[])),
+							A2(
+							_elm_lang$svg$Svg$path,
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$svg$Svg_Attributes$d('M25,39.7l22.4,51l7.9-32.2L76.2,84l1.3-61.2'),
+									_elm_lang$svg$Svg_Attributes$class('letter__layer color-2')
+								]),
+							_elm_lang$core$Native_List.fromArray(
+								[]))
+						]))
+				]))
+		]));
 var _user$project$Main$pushRoomMsg = function (model) {
 	var msg_send_push = {
 		topic: 'reflection',
@@ -526,7 +583,8 @@ var _user$project$Main$view = function (model) {
 									]))
 							]))
 					])),
-				_user$project$Main$showText(model)
+				_user$project$Main$showText(model),
+				_user$project$Main$showAnimation
 			]));
 };
 var _user$project$Main$main = {

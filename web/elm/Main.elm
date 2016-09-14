@@ -1,14 +1,15 @@
 port module Main exposing (..)
-import Html exposing (text, Html)
-import Html.Attributes exposing (..)
+import Html exposing (text, Html, textarea,button, h3)
+import Html.Attributes exposing (id, style, checked, type', name, autofocus, placeholder)
 import Html.Events exposing (..)
 import JSPhoenix exposing (ChannelEventMsg, ChanExitCB)
 import Markdown exposing (..)
 import Json.Decode as JD exposing (int, string, bool)
 import Json.Encode as JE exposing (int, null, object)
 import Html.App as Html
-import Html exposing (..)
-
+import Html exposing (div, p, ul, li, input, span)
+import Svg exposing (Svg, rect, svg, path, g)
+import Svg.Attributes exposing (width, height, x, y, rx, ry, viewBox, d, class)
 -- MODEL 
 
 type alias Model =
@@ -255,6 +256,7 @@ view model =
       , li [] [ button [ onClick LoginMsg ] [ text "Login" ] ]
       ]
   , showText model
+  , showAnimation
   ]
 
 inputEmail: Model -> Html Msg
@@ -331,3 +333,16 @@ showText model =
     ]
   , div [id "md-text"] [Markdown.toHtml [] model.markdown]
   ]
+  
+showAnimation : Html msg
+showAnimation =
+  svg
+    [ width "100%", height "100%", viewBox "0 0 320 180", Svg.Attributes.class "letters letters--effect-1" ]
+    [ g [ Svg.Attributes.class "letter letter--1" ]
+        [ g [ Svg.Attributes.class "letter__part" ]
+          [ path [ d "M25,39.7l22.4,51l7.9-32.2L76.2,84l1.3-61.2", class "letter__layer color-6" ] []
+          , path [ d "M25,39.7l22.4,51l7.9-32.2L76.2,84l1.3-61.2", class "letter__layer color-1" ] []
+          , path [ d "M25,39.7l22.4,51l7.9-32.2L76.2,84l1.3-61.2", class "letter__layer color-2" ] []
+          ]
+        ]
+    ]
